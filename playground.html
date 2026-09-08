@@ -252,7 +252,7 @@
       </div>
 
       <h3 style="margin-top:22px">Training data <span style="font-weight:400;color:var(--faint);font-size:13px">— edit me, then retrain</span></h3>
-      <textarea id="corpus" spellcheck="false"></textarea>
+      <textarea id="corpus" spellcheck="false" maxlength="20000"></textarea>
       <div class="row2">
         <button class="btn" id="g-train">🔁 Retrain the model</button>
         <button class="btn ghost" id="g-restore">Restore default text</button>
@@ -372,6 +372,12 @@ the dog barked at the bird on the roof. the dog slept under the table.
 the girl fed the cat and the dog. the girl sang a song to the bird.
 the cat purred and the dog wagged. the garden was quiet and the birds sang.`;
 
+/* The bigram table grows with the text — roughly one entry per distinct pair of
+   words — so a pasted novel builds millions of Map entries and locks the tab up.
+   Measured: 1.35 MB of text is ~90 MB of heap and a quarter of a second, and it
+   is far worse on a phone. 20 KB is about 3,500 words, which is more than enough
+   to play with and stays instant. The textarea carries the same cap. */
+const MAX_CORPUS = 20000;
 let uni=new Map(), bi=new Map(), vocab=new Set(), nTok=0, temp=0.7;
 let seedTokens=[], produced=[];
 
@@ -381,6 +387,8 @@ function bump(map,key,word){
   m.set(word,(m.get(word)||0)+1);
 }
 function trainNgram(text){
+  const trimmed = text.length > MAX_CORPUS;
+  if(trimmed) text = text.slice(0, MAX_CORPUS);
   uni=new Map(); bi=new Map(); vocab=new Set();
   const t=tokenize(text); nTok=t.length;
   t.forEach(w=>vocab.add(w));
@@ -392,7 +400,10 @@ function trainNgram(text){
   for(const m of uni.values()) weights+=m.size;
   for(const m of bi.values()) weights+=m.size;
   $("g-stats").innerHTML=`trained on <b>${nTok}</b> words · <b>${vocab.size}</b> unique ·
-    <b>${weights}</b> weights (context→word counts)`;
+    <b>${weights}</b> weights (context→word counts)` + (trimmed
+    ? ` · <span class="boom">only the first ${MAX_CORPUS/1000}k characters, the table would
+       have got too big for your browser, which is rather the point of Part 1b</span>`
+    : "");
 }
 
 /* returns {dist:[[word,p]...], ctx:"..."} using 2-word context, backing off */
@@ -722,8 +733,18 @@ CL.addEventListener("pointerdown",e=>{dragging=true;CL.setPointerCapture(e.point
 CL.addEventListener("pointermove",e=>{if(dragging)landPick(e);});
 CL.addEventListener("pointerup",()=>dragging=false);
 
-/* click the data plot to add a point */
+/* click the data plot to add a point. Capped, because drawLoss() evaluates the
+   loss over every data point for each of ~11,400 cells in the landscape, and it
+   redraws on every pointermove while you drag the ball. Measured: 1,000 points
+   is 54 ms a frame and 3,000 is 378 ms, which is a locked-up tab. 200 is far
+   more than the toy needs and stays under 12 ms. */
+const MAX_POINTS = 200;
 CF.addEventListener("click",e=>{
+  if(data.length >= MAX_POINTS){
+    const m=$("t-msg"); m.className="boom";
+    m.textContent=`that is ${MAX_POINTS} points, which is plenty. Press new data to start over.`;
+    return;
+  }
   const r=CF.getBoundingClientRect(), pad=38/CF.width, padY=38/CF.height;
   const i=(e.clientX-r.left)/r.width, j=(e.clientY-r.top)/r.height;
   const x=clamp((i-pad)/(1-pad-0.023)*XMAX,0,XMAX);
@@ -945,7 +966,10 @@ document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>showGame(t.dataset.
    on its own. Open the owning game first, then scroll. */
 function fromHash(){
   const id=location.hash.replace("#","");
-  if(ANCHORS[id]) showGame(ANCHORS[id], id);
+  /* own-property only: a bare ANCHORS[id] also answers to "constructor" and
+     "__proto__". showGame's allowlist catches those anyway, but the lookup
+     should not be the thing we are relying on. */
+  if(Object.prototype.hasOwnProperty.call(ANCHORS,id)) showGame(ANCHORS[id], id);
 }
 window.addEventListener("hashchange",fromHash);
 fromHash();
