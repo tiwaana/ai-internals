@@ -8,7 +8,7 @@ It assumes no maths. The audience is a highschooler, or an adult who does not
 work in technology, and the goal is that you finish able to hold a real
 conversation with an AI engineer and push back on parts of it.
 
-**Read it: https://tiwaana.github.io/claude-ai-internals/**
+**Read it: https://tiwaana.github.io/ai-internals/**
 
 ## What is here
 
