@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How AI Actually Works</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2b3444;
+    --ink:#e6edf3; --dim:#9aa7b8; --faint:#6b7688;
+    --accent:#4c8dff; --accent2:#37d39b;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f8; --line:#dce3ec;
+      --ink:#18202b; --dim:#5a6675; --faint:#8a97a6; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .topbar{position:sticky;top:0;z-index:10;background:var(--bg);
+    border-bottom:1px solid var(--line);backdrop-filter:saturate(1.2) blur(6px)}
+  .topbar .row{max-width:860px;margin:0 auto;padding:12px 24px;display:flex;
+    align-items:center;gap:14px}
+  .back{font-family:var(--mono);font-size:13px;color:var(--dim);flex:none}
+  .back:hover{color:var(--accent);text-decoration:none}
+  .fname{font-family:var(--mono);font-size:13px;color:var(--faint);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .spacer{flex:1}
+  select.picker{font-family:var(--mono);font-size:12.5px;background:var(--panel);
+    color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px 8px;max-width:46vw}
+
+  main{max-width:860px;margin:0 auto;padding:34px 24px 90px}
+  .md h1{font-size:clamp(28px,4.4vw,40px);line-height:1.12;margin:0 0 8px;
+    letter-spacing:-.02em;font-weight:700}
+  .md h2{font-size:24px;margin:40px 0 12px;padding-bottom:7px;
+    border-bottom:1px solid var(--line);letter-spacing:-.01em}
+  .md h3{font-size:19px;margin:30px 0 10px}
+  .md h4{font-size:16px;margin:24px 0 8px}
+  .md h5,.md h6{font-size:13px;font-family:var(--mono);text-transform:uppercase;
+    letter-spacing:.1em;color:var(--faint);margin:22px 0 8px}
+  .md p{margin:0 0 15px}
+  .md ul,.md ol{margin:0 0 15px;padding-left:26px}
+  .md li{margin:4px 0}
+  .md li>ul,.md li>ol{margin:4px 0}
+  .md a{text-decoration:underline;text-underline-offset:2px}
+  .md blockquote{margin:0 0 15px;padding:2px 18px;border-left:3px solid var(--accent);
+    background:var(--panel);border-radius:0 8px 8px 0;color:var(--dim)}
+  .md blockquote p{margin:10px 0}
+  .md hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+  .md img{max-width:100%;height:auto}
+
+  .md code{font-family:var(--mono);font-size:13px;background:var(--panel2);
+    padding:2px 6px;border-radius:5px;color:var(--ink);word-break:break-word}
+  .md pre{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;overflow-x:auto;margin:0 0 18px}
+  .md pre code{background:none;padding:0;font-size:12.5px;line-height:1.55;
+    white-space:pre;word-break:normal;color:var(--ink)}
+
+  .md .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin:0 0 18px}
+  .md table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .md th,.md td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  .md th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--faint);background:var(--panel2)}
+  .md tr:last-child td{border-bottom:none}
+  .md td code,.md th code{font-size:12px}
+
+  .msg{color:var(--faint);font-family:var(--mono);font-size:14px;padding:40px 0}
+  .msg.err{color:#f07aa6}
+
+  /* doc index (no ?f=) */
+  .docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:26px}
+  .docs a{display:flex;flex-direction:column;gap:3px;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:13px 15px;color:var(--ink)}
+  .docs a:hover{border-color:var(--accent);text-decoration:none}
+  .docs a .fn{font-family:var(--mono);font-size:12.5px;color:var(--accent)}
+  .docs a .ds{font-size:12px;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="row">
+    <a class="back" href="?f=ai-internals-00-index.md">← contents</a>
+    <span class="fname" id="fname"></span>
+    <span class="spacer"></span>
+    <select class="picker" id="picker" aria-label="Jump to a doc"></select>
+  </div>
+</div>
+
+<main>
+  <div id="content" class="md"><div class="msg">Loading…</div></div>
+</main>
+
+<script src="vendor/marked.umd.js"></script>
+<script>
+(function(){
+  // Curated list — label + one-line description. Drives the picker and the
+  // no-arg index. Files not listed here are still loadable via ?f=, but only
+  // names matching a strict allowlist pattern are ever fetched.
+  var DOCS = [
+    ["ai-internals-00-index.md", "★ start here"],
+    ["ai-internals-01a-what-changed.md", "  I · 1a — what changed while I was away"],
+    ["ai-internals-01b-the-guessing-machine.md", "  I · 1b — the guessing machine"],
+    ["ai-internals-02-the-perceptron.md", "  I · 2 — the perceptron"],
+    ["ai-internals-03-what-learning-means.md", "  I · 3 — what \"learning\" actually means"],
+    ["ai-internals-04-backpropagation.md", "  I · 4 — backpropagation"],
+    ["ai-internals-05-terrible-in-2002.md", "  I · 5 — why it was terrible in 2002"],
+    ["ai-internals-06-tokens-and-embeddings.md", " II · 6 — tokens & embeddings"],
+    ["ai-internals-07-layers-and-depth.md", " II · 7 — layers & depth"],
+    ["ai-internals-08-the-memory-problem.md", " II · 8 — the memory problem"],
+    ["ai-internals-09-attention.md", " II · 9 — attention"],
+    ["ai-internals-10-tiny-transformer.md", " II · 10 — build a transformer"],
+    ["ai-internals-11-pretraining.md", " II · 11 — pretraining"],
+    ["ai-internals-16-open-vs-closed-weights.md", " IV · 16 — open vs closed weights"],
+    ["ai-internals-17-size-and-quantization.md", " IV · 17 — size & quantization"],
+  ];
+
+  var contentEl = document.getElementById("content");
+  var fnameEl   = document.getElementById("fname");
+  var pickerEl  = document.getElementById("picker");
+
+  // Only ever fetch a bare filename under docs/. No slashes, no traversal.
+  var SAFE = /^[A-Za-z0-9._-]+\.md$/;
+
+  function getParam(){
+    var m = /[?&]f=([^&]+)/.exec(location.search);
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+
+  // Build the picker
+  var opt0 = document.createElement("option");
+  opt0.value = ""; opt0.textContent = "— jump to a doc —";
+  pickerEl.appendChild(opt0);
+  DOCS.forEach(function(d){
+    var o = document.createElement("option");
+    o.value = d[0]; o.textContent = d[0];
+    pickerEl.appendChild(o);
+  });
+  pickerEl.addEventListener("change", function(){
+    if(this.value) location.search = "?f=" + encodeURIComponent(this.value);
+  });
+
+  marked.setOptions({ gfm:true, breaks:false });
+
+  function showIndex(){
+    document.title = "How AI Actually Works";
+    fnameEl.textContent = "documentation";
+    var html = '<h1>Documentation</h1><p style="color:var(--dim)">'
+      + 'The full source docs, rendered. Pick one:</p><div class="docs">';
+    DOCS.forEach(function(d){
+      html += '<a href="?f=' + encodeURIComponent(d[0]) + '">'
+        + '<span class="fn">' + d[0] + '</span>'
+        + '<span class="ds">' + d[1] + '</span></a>';
+    });
+    html += '</div>';
+    contentEl.innerHTML = html;
+  }
+
+  function wrapTables(){
+    contentEl.querySelectorAll("table").forEach(function(t){
+      if(t.parentElement.classList.contains("tblwrap")) return;
+      var w = document.createElement("div");
+      w.className = "tblwrap";
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  }
+
+  var f = getParam();
+  if(!f){ f = "ai-internals-00-index.md"; }
+
+  if(!SAFE.test(f)){
+    contentEl.innerHTML = '<div class="msg err">Refused: '
+      + '“' + f.replace(/[<>&]/g,"") + '” is not a valid doc name.</div>';
+    return;
+  }
+
+  fnameEl.textContent = "";
+  document.title = "How AI Actually Works";
+  pickerEl.value = f;
+
+  fetch("docs/" + f)
+    .then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      return r.text();
+    })
+    .then(function(md){
+      contentEl.innerHTML = marked.parse(md);
+      wrapTables();
+      // Rewrite relative .md links to route through this viewer.
+      contentEl.querySelectorAll('a[href$=".md"]').forEach(function(a){
+        var href = a.getAttribute("href");
+        if(/^https?:/i.test(href)) return;
+        var name = href.replace(/^.*\//, "");
+        if(SAFE.test(name)) a.setAttribute("href", "?f=" + encodeURIComponent(name));
+      });
+      // Jump to in-page anchor if present.
+      if(location.hash){
+        var el = document.getElementById(location.hash.slice(1));
+        if(el) el.scrollIntoView();
+      }
+    })
+    .catch(function(e){
+      contentEl.innerHTML = '<div class="msg err">Could not load docs/' + f
+        + ' — ' + e.message + '</div>';
+    });
+})();
+</script>
+</body>
+</html>

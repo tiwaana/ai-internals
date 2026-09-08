@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Playground — Beacon</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2b3444;
+    --ink:#e6edf3; --dim:#9aa7b8; --faint:#6b7688;
+    --accent:#4c8dff; --accent2:#37d39b; --amber:#f4b860; --pink:#f07aa6; --violet:#b48ef0;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f8; --line:#dce3ec;
+      --ink:#18202b; --dim:#5a6675; --faint:#8a97a6; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+  .topbar{position:sticky;top:0;z-index:10;background:var(--bg);
+    border-bottom:1px solid var(--line);backdrop-filter:saturate(1.2) blur(6px)}
+  .topbar .row{max-width:900px;margin:0 auto;padding:11px 20px;display:flex;gap:14px;align-items:center}
+  .back{font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .back:hover{color:var(--accent);text-decoration:none}
+
+  header.hero{padding:40px 0 20px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent2);margin:0 0 12px}
+  h1{font-size:clamp(28px,5vw,44px);line-height:1.05;margin:0 0 10px;letter-spacing:-.02em}
+  .sub{font-size:17px;color:var(--dim);max-width:64ch;margin:0}
+
+  .tabs{display:flex;gap:8px;margin:26px 0 22px;flex-wrap:wrap}
+  .tab{font-family:var(--mono);font-size:13px;padding:8px 15px;border-radius:999px;cursor:pointer;
+    background:var(--panel);border:1px solid var(--line);color:var(--dim);user-select:none}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  .card{scroll-margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;margin:0 0 20px}
+  .hint{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin:0 0 18px}
+  h3{margin:0 0 12px;font-size:16px;letter-spacing:-.01em}
+  .hidden{display:none!important}
+  .center{text-align:center}
+
+  .btn{font-family:var(--mono);font-size:13.5px;padding:9px 16px;border-radius:10px;cursor:pointer;
+    background:var(--accent);border:1px solid var(--accent);color:#fff}
+  .btn.ghost{background:var(--panel2);border-color:var(--line);color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+  .row2{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+
+  .note{font-size:14px;color:var(--dim);background:var(--panel2);border-left:3px solid var(--accent);
+    border-radius:0 8px 8px 0;padding:12px 16px;margin:20px 0 0}
+  .note b{color:var(--ink)}
+  code{font-family:var(--mono);font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:5px}
+
+  /* --- shared bars --- */
+  .barrow{display:flex;align-items:center;gap:10px;margin:6px 0;cursor:default}
+  .barrow.pick{cursor:pointer}
+  .barrow.pick:hover .barlabel{color:var(--accent)}
+  .barlabel{font-family:var(--mono);font-size:13px;width:96px;text-align:right;color:var(--dim);flex:none;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bartrack{flex:1;background:var(--panel2);border-radius:7px;height:22px;overflow:hidden;border:1px solid var(--line)}
+  .barfill{height:100%;transition:width .25s ease;background:linear-gradient(90deg,var(--accent),var(--violet))}
+  .barpct{font-family:var(--mono);font-size:12.5px;width:48px;color:var(--ink);flex:none}
+  .barrow.top .barfill{background:linear-gradient(90deg,var(--accent2),#6fe6bf)}
+  .barnote{font-family:var(--mono);font-size:11.5px;color:var(--faint);width:86px;flex:none}
+
+  /* --- sliders --- */
+  .slider{display:flex;align-items:center;gap:12px;margin:10px 0}
+  .slider label{font-family:var(--mono);font-size:12.5px;color:var(--dim);width:150px;flex:none}
+  input[type=range]{flex:1;min-width:140px;accent-color:var(--accent)}
+  .sval{font-family:var(--mono);font-size:13px;color:var(--amber);width:104px;flex:none;text-align:right}
+
+  textarea{width:100%;min-height:120px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+    border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.6;resize:vertical}
+  input[type=text]{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;font-family:var(--mono);font-size:14px;flex:1;min-width:200px}
+
+  .stats{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin:10px 0 0}
+  .stats b{color:var(--accent2)}
+  .gen{font-size:17px;line-height:1.7;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;margin:0 0 14px;min-height:60px}
+  .gen .seed{color:var(--dim)}
+  .gen .new{color:var(--accent2)}
+  .gen .cursor{color:var(--amber)}
+
+  /* --- attention --- */
+  .sent{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0 0}
+  .tok{font-family:var(--mono);font-size:15px;padding:7px 11px;border-radius:9px;
+    background:var(--panel2);border:1px solid var(--line);position:relative}
+  .tok.q{background:rgba(244,184,96,.18);border-color:var(--amber);color:var(--amber);font-weight:700}
+  .tok .amt{position:absolute;left:0;bottom:0;height:3px;background:var(--accent2);border-radius:0 0 9px 9px}
+  svg.arcs{display:block;width:100%;height:110px}
+  .goal{font-size:14.5px;padding:11px 14px;border-radius:10px;background:var(--panel2);
+    border:1px solid var(--line);margin:0 0 16px}
+  .goal.win{border-color:var(--accent2);color:var(--accent2)}
+  .out{font-family:var(--mono);font-size:15px;text-align:center;margin:14px 0 0;color:var(--dim)}
+  .out b{color:var(--accent2);font-size:19px}
+
+  /* --- training --- */
+  .panes{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:720px){ .panes{grid-template-columns:1fr} }
+  .pane{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .pane h4{margin:0 0 8px;font-family:var(--mono);font-size:12px;color:var(--dim);
+    letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  canvas{width:100%;height:auto;display:block;border-radius:6px;cursor:crosshair;touch-action:none}
+  .readout{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:13.5px;margin:14px 0 0}
+  .readout span{color:var(--dim)}
+  .readout b{color:var(--ink)}
+  .readout .lo{color:var(--amber)}
+  .boom{color:var(--pink);font-weight:600}
+  .win{color:var(--accent2);font-weight:600}
+
+  footer{padding:30px 0 60px;color:var(--faint);font-family:var(--mono);font-size:12.5px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="row">
+  <a class="back" href="./doc.html?f=ai-internals-00-index.md">← AI Internals series</a>
+  <a class="back" href="./">home</a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">Beacon · AI Playground</p>
+  <h1>Four real machines 🧠</h1>
+  <p class="sub">Not simulations. Each toy below actually runs the thing it explains, live in your browser.
+  The parrot is trained on text you can edit. The neuron learns its own weights from labels you give it, using the
+  rule from 1958, and then fails at XOR for the reason it really fails. Downhill uses real gradients and will
+  genuinely blow up if you take steps that are too big. The attention weights are real dot products.</p>
+</div></header>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab on" data-game="ngram">📚 Feed the Parrot <span style="opacity:.7">· prediction</span></div>
+    <div class="tab" data-game="percep">🎓 Pick a College <span style="opacity:.7">· one neuron</span></div>
+    <div class="tab" data-game="train">⛷️ Downhill <span style="opacity:.7">· training</span></div>
+    <div class="tab" data-game="attn">🔦 Spotlight <span style="opacity:.7">· attention</span></div>
+  </div>
+
+  <!-- ================= GAME 4: THE PERCEPTRON ================= -->
+  <section id="percep" class="hidden">
+    <div class="card" id="college">
+      <h3>🎓 Pick a College — one neuron, and it learns its own weights</h3>
+      <p class="hint">Ten things you care about, ten numbers for how much you care. Multiply, add, see if the total clears the bar.
+      That is a perceptron, and nothing here is faked: the total below is a real weighted sum, and the learn button runs
+      Rosenblatt's 1958 rule over the examples you label.</p>
+
+      <div class="panes">
+        <div class="pane">
+          <h4>This college scores</h4>
+          <div id="pc-inputs"></div>
+        </div>
+        <div class="pane">
+          <h4>How much you care <span style="text-transform:none;font-weight:400">(the weights)</span></h4>
+          <div id="pc-weights"></div>
+        </div>
+      </div>
+
+      <div class="slider" style="margin-top:14px">
+        <label>bias (the bar)</label>
+        <input type="range" id="pc-bias" min="-60" max="60" value="-10">
+        <span class="sval" id="pc-biasv">-1.0</span>
+      </div>
+
+      <div class="out" id="pc-out">total <b>0.00</b></div>
+      <div class="goal" id="pc-verdict">Move a slider to see what this neuron decides.</div>
+
+      <div class="row2">
+        <button class="btn ghost" id="pc-roll">🎲 new college</button>
+        <button class="btn" id="pc-yes">✓ I would apply</button>
+        <button class="btn ghost" id="pc-no">✗ I would not</button>
+      </div>
+      <p class="stats" id="pc-set">labelled so far: <b>0</b></p>
+
+      <div class="row2">
+        <button class="btn" id="pc-learn">🧠 learn the weights from my labels</button>
+        <button class="btn ghost" id="pc-clear">clear labels</button>
+      </div>
+      <p class="stats" id="pc-status"></p>
+
+      <div class="note"><b>Label six or seven colleges, then hit learn.</b> Nobody sets the weights by hand in a
+      real model, and you do not have to either. The rule is the whole of learning in one line: when the neuron gets one
+      wrong, nudge every weight a little in the direction that would have fixed it, then go round again.
+      If your labels do not follow any consistent rule, watch what happens. It never settles, and that failure is not a
+      bug in the toy, it is the same wall the next game is about.</div>
+    </div>
+
+    <div class="card" id="xor">
+      <h3>🧱 The Wall — one or the other, but not both</h3>
+      <p class="hint">Four points. Two of them should fire, two should not. A single neuron can only ever cut the square
+      with one straight line, so drag the line anywhere you like and try to get all four right.</p>
+
+      <div class="panes">
+        <div class="pane">
+          <h4>The square</h4>
+          <canvas id="xc" width="440" height="440"></canvas>
+        </div>
+        <div class="pane">
+          <h4>The neuron</h4>
+          <div class="slider"><label>weight on x</label><input type="range" id="x-w1" min="-100" max="100" value="60"><span class="sval" id="x-w1v">0.60</span></div>
+          <div class="slider"><label>weight on y</label><input type="range" id="x-w2" min="-100" max="100" value="60"><span class="sval" id="x-w2v">0.60</span></div>
+          <div class="slider"><label>bias</label><input type="range" id="x-b" min="-150" max="150" value="-30"><span class="sval" id="x-bv">-0.30</span></div>
+          <p class="stats" id="x-score">correct: <b>0</b> of 4</p>
+          <div class="row2">
+            <button class="btn ghost" id="x-learn">let it try to learn</button>
+          </div>
+          <p class="stats" id="x-msg"></p>
+          <div class="row2">
+            <button class="btn" id="x-hidden">➕ add a hidden layer</button>
+            <button class="btn ghost" id="x-reset">back to one neuron</button>
+          </div>
+          <p class="stats" id="x-hmsg"></p>
+        </div>
+      </div>
+
+      <div class="note"><b>Minsky and Papert, 1969.</b> They proved this cannot be done, correctly, and the field took it
+      as a verdict on the whole idea. Add one hidden layer and the region stops being a straight cut, and the four points
+      separate easily. Everybody knew that in 1969 too. What nobody had was a way to <i>train</i> the stack, and that did
+      not arrive until 1986. The button above trains it with the backprop from Part 4, running for real in your browser.</div>
+    </div>
+  </section>
+
+  <!-- ================= GAME 1: FEED THE PARROT ================= -->
+  <section id="ngram">
+    <div class="card" id="parrot">
+      <h3>📚 Feed the Parrot — you are the training data</h3>
+      <p class="hint">This really is a language model. Its "weights" are counts of which word follows which,
+        learned from the text below. Edit the text → the model changes. Nothing is hardcoded.</p>
+
+      <div class="gen" id="gen"></div>
+
+      <div class="row2" style="margin-top:0">
+        <input type="text" id="seed" value="the cat" spellcheck="false">
+        <button class="btn" id="g-sample">🎲 Sample a word</button>
+        <button class="btn ghost" id="g-run">Write 12 words ⏩</button>
+        <button class="btn ghost" id="g-clear">Reset</button>
+      </div>
+
+      <div id="g-bars" style="margin-top:18px"></div>
+      <p class="stats" id="g-ctx"></p>
+
+      <div class="slider" style="margin-top:14px">
+        <label>🌡️ temperature</label>
+        <input type="range" id="g-temp" min="5" max="200" value="70">
+        <span class="sval" id="g-tval"></span>
+      </div>
+
+      <h3 style="margin-top:22px">Training data <span style="font-weight:400;color:var(--faint);font-size:13px">— edit me, then retrain</span></h3>
+      <textarea id="corpus" spellcheck="false"></textarea>
+      <div class="row2">
+        <button class="btn" id="g-train">🔁 Retrain the model</button>
+        <button class="btn ghost" id="g-restore">Restore default text</button>
+        <span class="stats" id="g-stats"></span>
+      </div>
+    </div>
+    <p class="note"><b>Try this:</b> type <code>the cat</code> and sample a few times — it parrots the text.
+      Now add a line to the training data like <i>"the cat drove a tractor to Denver."</i>, hit
+      <b>Retrain</b>, and sample again: a brand-new possibility appears with a real probability next to it.
+      That is the whole loop — <b>data → weights → probabilities → a sampled word</b>. Temperature doesn't change
+      what the model knows; it only changes how boldly it picks. A real LLM is this, with billions of weights
+      and a much longer memory of the context.</p>
+  </section>
+
+  <!-- ================= GAME 2: SPOTLIGHT ================= -->
+  <section id="attn" class="hidden">
+    <div class="card" id="spotlight">
+      <h3>🔦 Spotlight — build an attention head by hand</h3>
+      <p class="hint">The word <b>"it"</b> has to figure out what it refers to. It does that by shining a
+        spotlight over the other words. You control what the spotlight is <i>looking for</i>; the strength on
+        each word is a real dot product, softmaxed live.</p>
+
+      <div class="goal" id="a-goal"></div>
+
+      <svg class="arcs" id="a-arcs"></svg>
+      <div class="sent" id="a-sent"></div>
+
+      <div style="margin-top:22px">
+        <div class="slider"><label>looking for: 🏆 thing-ness</label>
+          <input type="range" id="a-q0" min="-100" max="100" value="0"><span class="sval" id="a-q0v"></span></div>
+        <div class="slider"><label>looking for: 🧳 container-ness</label>
+          <input type="range" id="a-q1" min="-100" max="100" value="0"><span class="sval" id="a-q1v"></span></div>
+        <div class="slider"><label>looking for: 🏃 action-ness</label>
+          <input type="range" id="a-q2" min="-100" max="100" value="0"><span class="sval" id="a-q2v"></span></div>
+        <div class="slider"><label>🔍 focus (softmax sharpness)</label>
+          <input type="range" id="a-sharp" min="10" max="1000" value="200"><span class="sval" id="a-sv"></span></div>
+      </div>
+
+      <div id="a-bars" style="margin-top:18px"></div>
+      <p class="out" id="a-out"></p>
+
+      <div class="row2">
+        <button class="btn" id="a-next">Next puzzle →</button>
+        <button class="btn ghost" id="a-solve">💡 Show me a solution</button>
+        <button class="btn ghost" id="a-zero">Reset sliders</button>
+      </div>
+    </div>
+    <p class="note"><b>What just happened:</b> each word carries a small vector of features (its <b>key</b>).
+      Your three sliders are the <b>query</b>. Attention strength = <code>query · key ÷ √d</code>, pushed through
+      a softmax so the numbers add to 100%. The answer is a <b>blend</b> of every word's <b>value</b>, weighted by
+      that percentage — attention never picks one word, it mixes. Turn <b>focus</b> down and the blend goes mushy;
+      turn it up and it snaps to a single word. And the punchline: in a real transformer nobody sets those sliders
+      by hand — <b>training</b> discovers them. Which is game 3. →</p>
+  </section>
+
+  <!-- ================= GAME 3: DOWNHILL ================= -->
+  <section id="train" class="hidden">
+    <div class="card" id="downhill">
+      <h3>⛷️ Downhill — real gradient descent, two weights</h3>
+      <p class="hint">A model with exactly 2 weights: <code>guess = w × coffees + b</code>. Left = the data and
+        the model's current guess. Right = the <b>loss landscape</b>: every possible (w, b), coloured by how
+        wrong it is. Training = roll the ball downhill. Drag the ball. Click the left plot to add data.</p>
+
+      <div class="panes">
+        <div class="pane"><h4>the data &amp; the model</h4>
+          <canvas id="c-fit" width="620" height="460"></canvas></div>
+        <div class="pane"><h4>the loss landscape (w, b)</h4>
+          <canvas id="c-loss" width="620" height="460"></canvas></div>
+      </div>
+
+      <div class="readout">
+        <span>w <b id="t-w"></b></span>
+        <span>b <b id="t-b"></b></span>
+        <span>loss <b class="lo" id="t-loss"></b></span>
+        <span>step <b id="t-step"></b></span>
+        <span id="t-msg"></span>
+      </div>
+
+      <div class="slider" style="margin-top:14px">
+        <label>👣 learning rate</label>
+        <input type="range" id="t-lr" min="1" max="300" value="60">
+        <span class="sval" id="t-lrv"></span>
+      </div>
+
+      <div class="row2">
+        <button class="btn" id="t-step1">Step ↓</button>
+        <button class="btn" id="t-run">▶ Run 60 steps</button>
+        <button class="btn ghost" id="t-rand">🎲 Random weights</button>
+        <button class="btn ghost" id="t-data">🔀 New data</button>
+      </div>
+    </div>
+    <p class="note"><b>What you're learning:</b> the yellow arrow is the real <b>gradient</b> — the compass
+      needle pointing straight uphill. A training step walks the opposite way, and the size of that walk is the
+      <b>learning rate</b>. Crank it past about 0.20 and watch the ball fling itself across the valley and explode:
+      that is a genuine divergence, the single most common way real training runs die. Drag the ball somewhere
+      terrible and hit Run to watch it find its way home. <code>train_hello.py</code> does exactly this — same loop,
+      same arithmetic — just with hundreds of weights instead of two, in a landscape nobody can draw.</p>
+  </section>
+</div>
+
+<footer>Beacon · AI Playground · hand-built teaching toys — no model downloaded, every number computed live in your browser</footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ==================================================================
+   GAME 1 — FEED THE PARROT  (a real n-gram model, trained in-page)
+   ================================================================== */
+const DEFAULT_CORPUS =
+`the cat sat on the mat. the cat sat on the roof and watched the birds.
+the cat chased the mouse under the table. the dog chased the cat around the garden.
+the mouse ran under the table and the cat ran after the mouse.
+a bird sat on the roof. a bird sang a song about the garden.
+the dog barked at the bird on the roof. the dog slept under the table.
+the girl fed the cat and the dog. the girl sang a song to the bird.
+the cat purred and the dog wagged. the garden was quiet and the birds sang.`;
+
+let uni=new Map(), bi=new Map(), vocab=new Set(), nTok=0, temp=0.7;
+let seedTokens=[], produced=[];
+
+const tokenize = t => (t.toLowerCase().match(/[a-z']+|[.,!?]/g) || []);
+function bump(map,key,word){
+  let m=map.get(key); if(!m){m=new Map(); map.set(key,m);}
+  m.set(word,(m.get(word)||0)+1);
+}
+function trainNgram(text){
+  uni=new Map(); bi=new Map(); vocab=new Set();
+  const t=tokenize(text); nTok=t.length;
+  t.forEach(w=>vocab.add(w));
+  for(let i=0;i<t.length-1;i++){
+    bump(uni,t[i],t[i+1]);
+    if(i>0) bump(bi,t[i-1]+" "+t[i],t[i+1]);
+  }
+  let weights=0;
+  for(const m of uni.values()) weights+=m.size;
+  for(const m of bi.values()) weights+=m.size;
+  $("g-stats").innerHTML=`trained on <b>${nTok}</b> words · <b>${vocab.size}</b> unique ·
+    <b>${weights}</b> weights (context→word counts)`;
+}
+
+/* returns {dist:[[word,p]...], ctx:"..."} using 2-word context, backing off */
+function predict(tokens){
+  let counts=null, ctx="";
+  if(tokens.length>=2){
+    const k=tokens[tokens.length-2]+" "+tokens[tokens.length-1];
+    if(bi.has(k)){ counts=bi.get(k); ctx=`matched 2-word context "${k}"`; }
+  }
+  if(!counts && tokens.length>=1){
+    const k=tokens[tokens.length-1];
+    if(uni.has(k)){ counts=uni.get(k); ctx=`no 2-word match — backed off to 1-word context "${k}"`; }
+  }
+  if(!counts) return {dist:[], ctx:"that word never appears in the training text — the model has nothing to go on."};
+  const total=[...counts.values()].reduce((a,b)=>a+b,0);
+  let raw=[...counts.entries()].map(([w,c])=>[w, c/total]);
+  const hot=raw.map(([w,p])=>[w, Math.pow(p,1/temp)]);
+  const z=hot.reduce((a,[,p])=>a+p,0);
+  const dist=hot.map(([w,p])=>[w,p/z]).sort((a,b)=>b[1]-a[1]);
+  return {dist, ctx:`${ctx} · seen ${total} time${total===1?"":"s"} in the text`};
+}
+
+function renderGen(){
+  $("gen").innerHTML=`<span class="seed">${seedTokens.join(" ")}</span> `+
+    `<span class="new">${produced.join(" ")}</span><span class="cursor"> ▌</span>`;
+}
+function renderBars(){
+  const {dist,ctx}=predict(seedTokens.concat(produced));
+  const box=$("g-bars"); box.innerHTML="";
+  $("g-ctx").textContent=ctx;
+  dist.slice(0,8).forEach(([w,p],i)=>{
+    const row=document.createElement("div");
+    row.className="barrow pick"+(i===0?" top":"");
+    row.innerHTML=`<span class="barlabel">${w}</span>
+      <span class="bartrack"><span class="barfill" style="width:${(p*100).toFixed(1)}%"></span></span>
+      <span class="barpct">${(p*100).toFixed(0)}%</span>
+      <span class="barnote">click to pick</span>`;
+    row.onclick=()=>{ produced.push(w); renderGen(); renderBars(); };
+    box.appendChild(row);
+  });
+  if(!dist.length) box.innerHTML=`<p class="stats">— dead end. Try another seed, or add this word to the training text below.</p>`;
+}
+function sampleOnce(){
+  const {dist}=predict(seedTokens.concat(produced));
+  if(!dist.length) return false;
+  let r=Math.random();
+  for(const [w,p] of dist){ r-=p; if(r<=0){ produced.push(w); return true; } }
+  produced.push(dist[0][0]); return true;
+}
+function resetGen(){
+  seedTokens=tokenize($("seed").value); produced=[]; renderGen(); renderBars();
+}
+$("g-sample").onclick=()=>{ if(sampleOnce()){ renderGen(); renderBars(); } };
+$("g-run").onclick=()=>{ let n=0; const iv=setInterval(()=>{
+    if(!sampleOnce()||++n>=12){ clearInterval(iv); } renderGen(); renderBars(); },110); };
+$("g-clear").onclick=resetGen;
+$("seed").oninput=resetGen;
+$("g-train").onclick=()=>{ trainNgram($("corpus").value); resetGen(); };
+$("g-restore").onclick=()=>{ $("corpus").value=DEFAULT_CORPUS; trainNgram(DEFAULT_CORPUS); resetGen(); };
+$("g-temp").oninput=e=>{
+  temp=e.target.value/100;
+  $("g-tval").textContent = temp<0.5 ? temp.toFixed(2)+" cautious"
+                          : temp>1.2 ? temp.toFixed(2)+" wild" : temp.toFixed(2)+" balanced";
+  renderBars();
+};
+$("corpus").value=DEFAULT_CORPUS;
+trainNgram(DEFAULT_CORPUS);
+$("g-temp").oninput({target:$("g-temp")});
+resetGen();
+
+/* ==================================================================
+   GAME 2 — SPOTLIGHT (one real attention head, you supply the query)
+   ================================================================== */
+/* keys / values live in a 3-d space: [thing, container, action] */
+const WORDS=[
+  {w:"the",      k:[0.05,0.05,0.05]},
+  {w:"trophy",   k:[0.95,0.15,0.05]},
+  {w:"didn't",   k:[0.05,0.05,0.55]},
+  {w:"fit",      k:[0.10,0.45,0.90]},
+  {w:"inside",   k:[0.05,0.70,0.30]},
+  {w:"the",      k:[0.05,0.05,0.05]},
+  {w:"suitcase", k:[0.45,0.95,0.05]},
+];
+const QTOK="it";
+const D=3, SQRTD=Math.sqrt(D);
+let q=[0,0,0], sharp=2.0, level=0;
+
+const LEVELS=[
+  {t:'🏆 <b>Level 1.</b> Put more than <b>50%</b> of the spotlight on <b>trophy</b>.',
+   test:a=>a[1]>0.50, sol:[1.00,-0.65,-1.00,6.0]},
+  {t:'🧳 <b>Level 2.</b> Now more than <b>50%</b> on <b>suitcase</b> instead — without touching what the words mean.',
+   test:a=>a[6]>0.50, sol:[0.30,1.00,-1.00,6.0]},
+  {t:'⚖️ <b>Level 3.</b> Attention is a <i>blend</i>. Give <b>trophy</b> and <b>suitcase</b> between <b>28%</b> and <b>42%</b> <i>each</i>.',
+   test:a=>a[1]>0.28&&a[1]<0.42&&a[6]>0.28&&a[6]<0.42, sol:[0.40,0.25,-0.30,7.5]},
+  {t:'🏃 <b>Level 4.</b> Make the spotlight land on the verb: over <b>45%</b> on <b>fit</b>.',
+   test:a=>a[3]>0.45, sol:[-0.15,0.40,1.00,6.0]},
+];
+
+function attention(){
+  const scores=WORDS.map(t=> (q[0]*t.k[0]+q[1]*t.k[1]+q[2]*t.k[2]) / SQRTD * sharp );
+  const m=Math.max(...scores);
+  const ex=scores.map(s=>Math.exp(s-m));
+  const z=ex.reduce((a,b)=>a+b,0);
+  return {a:ex.map(e=>e/z), scores};
+}
+function blendedOutput(a){
+  /* output = Σ aᵢ · vᵢ  (values = the same feature vectors), then nearest word by cosine */
+  const o=[0,0,0];
+  WORDS.forEach((t,i)=>{ for(let d=0;d<D;d++) o[d]+=a[i]*t.k[d]; });
+  const norm=Math.hypot(...o)||1e-9;
+  let best=null,bs=-2;
+  WORDS.forEach((t,i)=>{
+    if(t.w==="the") return;
+    const n2=Math.hypot(...t.k)||1e-9;
+    const cos=(o[0]*t.k[0]+o[1]*t.k[1]+o[2]*t.k[2])/(norm*n2);
+    if(cos>bs){bs=cos;best=t.w;}
+  });
+  return {word:best, cos:bs, vec:o};
+}
+
+function renderAttn(){
+  const {a,scores}=attention();
+
+  /* tokens */
+  const sent=$("a-sent"); sent.innerHTML="";
+  const qd=document.createElement("div"); qd.className="tok q"; qd.textContent=QTOK+" ←query";
+  WORDS.forEach((t,i)=>{
+    const d=document.createElement("div"); d.className="tok"; d.textContent=t.w;
+    d.innerHTML=`${t.w}<span class="amt" style="width:${(a[i]*100).toFixed(1)}%"></span>`;
+    d.style.opacity=(0.45+0.55*Math.min(1,a[i]*3)).toFixed(2);
+    sent.appendChild(d);
+  });
+  sent.appendChild(qd);
+
+  /* arcs from the query token to each word */
+  const svg=$("a-arcs"), W=svg.clientWidth||760, H=110;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const n=WORDS.length, qx=W-40;
+  let s="";
+  WORDS.forEach((t,i)=>{
+    const x=30+(W-110)*(i/(n-1||1));
+    const w=a[i];
+    s+=`<path d="M ${qx} ${H-6} C ${qx} ${H-70}, ${x} ${H-70}, ${x} ${H-6}"
+         fill="none" stroke="${w>0.3?'var(--accent2)':'var(--accent)'}"
+         stroke-opacity="${(0.18+0.8*w).toFixed(2)}" stroke-width="${(0.8+13*w).toFixed(2)}"
+         stroke-linecap="round"/>`;
+  });
+  svg.innerHTML=s;
+
+  /* bars */
+  const box=$("a-bars"); box.innerHTML="";
+  const order=[...a.keys()].sort((i,j)=>a[j]-a[i]);
+  order.forEach((i,rank)=>{
+    const row=document.createElement("div");
+    row.className="barrow"+(rank===0?" top":"");
+    row.innerHTML=`<span class="barlabel">${WORDS[i].w}</span>
+      <span class="bartrack"><span class="barfill" style="width:${(a[i]*100).toFixed(1)}%"></span></span>
+      <span class="barpct">${(a[i]*100).toFixed(0)}%</span>
+      <span class="barnote">q·k=${scores[i].toFixed(2)}</span>`;
+    box.appendChild(row);
+  });
+
+  /* blended output */
+  const o=blendedOutput(a);
+  $("a-out").innerHTML=`the blend of all 7 values lands nearest to → <b>${o.word}</b>
+    <span style="font-size:12.5px">(match ${(o.cos*100).toFixed(0)}%)</span>`;
+
+  /* level check */
+  const L=LEVELS[level];
+  const won=L.test(a);
+  $("a-goal").className="goal"+(won?" win":"");
+  $("a-goal").innerHTML=L.t+(won?' &nbsp;✅ <b>solved!</b>':'');
+}
+function setQ(v0,v1,v2,sh){
+  $("a-q0").value=v0*100; $("a-q1").value=v1*100; $("a-q2").value=v2*100;
+  if(sh!==undefined) $("a-sharp").value=sh*100;
+  readQ();
+}
+function readQ(){
+  q=[$("a-q0").value/100, $("a-q1").value/100, $("a-q2").value/100];
+  sharp=$("a-sharp").value/100;
+  $("a-q0v").textContent=q[0].toFixed(2);
+  $("a-q1v").textContent=q[1].toFixed(2);
+  $("a-q2v").textContent=q[2].toFixed(2);
+  $("a-sv").textContent = sharp<1.2 ? sharp.toFixed(1)+" blurry" : sharp>5 ? sharp.toFixed(1)+" laser" : sharp.toFixed(1)+" normal";
+  renderAttn();
+}
+["a-q0","a-q1","a-q2","a-sharp"].forEach(id=>$(id).oninput=readQ);
+$("a-next").onclick=()=>{ level=(level+1)%LEVELS.length; renderAttn(); };
+$("a-solve").onclick=()=>{ const s=LEVELS[level].sol; setQ(s[0],s[1],s[2],s[3]); };
+$("a-zero").onclick=()=>setQ(0,0,0,2.0);
+window.addEventListener("resize",()=>renderAttn());
+readQ();
+
+/* ==================================================================
+   GAME 3 — DOWNHILL (honest gradient descent on 2 weights)
+   ================================================================== */
+const CF=$("c-fit"), CL=$("c-loss");
+const fx=CF.getContext("2d"), lx=CL.getContext("2d");
+const XMAX=5, YMAX=14;                       // data plot ranges
+const WMIN=-1, WMAX=5, BMIN=-4, BMAX=8;      // landscape ranges
+let data=[], w=0, b=0, lr=0.06, tstep=0, blown=false, timer=null;
+
+function newData(){
+  data=[]; const tw=1.4+Math.random()*1.6, tb=1+Math.random()*3;
+  for(let i=0;i<12;i++){
+    const x=Math.random()*XMAX;
+    data.push([x, clamp(tw*x+tb+(Math.random()-0.5)*2.6, 0.2, YMAX-0.4)]);
+  }
+}
+function loss(W,B){
+  let s=0; for(const [x,y] of data){ const e=W*x+B-y; s+=e*e; }
+  return data.length ? s/(2*data.length) : 0;
+}
+function grad(){
+  let gw=0,gb=0; for(const [x,y] of data){ const e=w*x+b-y; gw+=e*x; gb+=e; }
+  const n=data.length||1; return [gw/n, gb/n];
+}
+
+/* --- data + fit line --- */
+function drawFit(){
+  const W=CF.width,H=CF.height, pad=38;
+  const px=x=>pad+(x/XMAX)*(W-pad-14), py=y=>H-pad-(y/YMAX)*(H-pad-14);
+  const css=getComputedStyle(document.body);
+  fx.clearRect(0,0,W,H);
+  fx.strokeStyle=css.getPropertyValue("--line"); fx.lineWidth=1.5;
+  fx.beginPath(); fx.moveTo(pad,14); fx.lineTo(pad,H-pad); fx.lineTo(W-14,H-pad); fx.stroke();
+  fx.fillStyle=css.getPropertyValue("--faint"); fx.font="16px ui-monospace,monospace";
+  fx.fillText("cups of coffee →",pad+6,H-12);
+  fx.save(); fx.translate(16,H-pad); fx.rotate(-Math.PI/2); fx.fillText("bugs fixed →",4,0); fx.restore();
+
+  /* residual sticks = the loss, made visible */
+  fx.strokeStyle="rgba(240,122,166,.55)"; fx.lineWidth=2;
+  for(const [x,y] of data){
+    const yh=clamp(w*x+b,-YMAX,YMAX*2);
+    fx.beginPath(); fx.moveTo(px(x),py(y)); fx.lineTo(px(x),py(yh)); fx.stroke();
+  }
+  /* line */
+  fx.strokeStyle=css.getPropertyValue("--accent"); fx.lineWidth=3;
+  fx.beginPath(); fx.moveTo(px(0),py(b)); fx.lineTo(px(XMAX),py(w*XMAX+b)); fx.stroke();
+  /* points */
+  fx.fillStyle=css.getPropertyValue("--accent2");
+  for(const [x,y] of data){ fx.beginPath(); fx.arc(px(x),py(y),6,0,7); fx.fill(); }
+}
+
+/* --- loss landscape --- */
+function drawLoss(){
+  const W=CL.width,H=CL.height, cell=5;
+  const img=lx.createImageData(W,H);
+  let lo=Infinity,hi=-Infinity; const grid=[];
+  for(let j=0;j<H;j+=cell){ const row=[];
+    for(let i=0;i<W;i+=cell){
+      const WW=WMIN+(i/W)*(WMAX-WMIN), BB=BMAX-(j/H)*(BMAX-BMIN);
+      const L=Math.log(1+loss(WW,BB)); row.push(L);
+      if(L<lo)lo=L; if(L>hi)hi=L;
+    } grid.push(row);
+  }
+  const span=(hi-lo)||1;
+  for(let j=0;j<H;j++){ const gr=grid[(j/cell)|0]||grid[grid.length-1];
+    for(let i=0;i<W;i++){
+      const t=(gr[(i/cell)|0]-lo)/span;
+      const band=(t*13)%1<0.09 ? 0.55 : 1;        // contour rings
+      const r=(18+235*Math.pow(t,.85))*band, g=(30+120*Math.pow(t,1.6))*band, bl=(70+40*(1-t))*band;
+      const o=(j*W+i)*4;
+      img.data[o]=r; img.data[o+1]=g; img.data[o+2]=bl; img.data[o+3]=255;
+    }
+  }
+  lx.putImageData(img,0,0);
+
+  const px=WW=>((WW-WMIN)/(WMAX-WMIN))*W, py=BB=>((BMAX-BB)/(BMAX-BMIN))*H;
+  const css=getComputedStyle(document.body);
+  lx.fillStyle="rgba(255,255,255,.75)"; lx.font="16px ui-monospace,monospace";
+  lx.fillText("w →",W-52,H-12); lx.fillText("↑ b",10,24);
+
+  if(!blown){
+    /* gradient arrow (points uphill; training walks the other way) */
+    const [gw,gb]=grad();
+    const n=Math.hypot(gw,gb)||1e-9, s=70;
+    const x0=px(w), y0=py(b), x1=x0+(gw/n)*s, y1=y0-(gb/n)*s*((WMAX-WMIN)/(BMAX-BMIN));
+    lx.strokeStyle=css.getPropertyValue("--amber"); lx.lineWidth=4; lx.lineCap="round";
+    lx.beginPath(); lx.moveTo(x0,y0); lx.lineTo(x1,y1); lx.stroke();
+    lx.beginPath(); lx.arc(x1,y1,7,0,7); lx.fillStyle=css.getPropertyValue("--amber"); lx.fill();
+    /* the ball */
+    lx.beginPath(); lx.arc(x0,y0,11,0,7);
+    lx.fillStyle="#fff"; lx.fill();
+    lx.strokeStyle=css.getPropertyValue("--accent"); lx.lineWidth=4; lx.stroke();
+  }
+}
+
+function readout(){
+  const L=loss(w,b);
+  $("t-w").textContent=w.toFixed(2); $("t-b").textContent=b.toFixed(2);
+  $("t-loss").textContent=blown?"∞":L.toFixed(3);
+  $("t-step").textContent=tstep;
+  const m=$("t-msg");
+  if(blown){ m.className="boom"; m.textContent="💥 diverged — learning rate too big. Reset and try smaller."; }
+  else if(L<0.6){ m.className="win"; m.textContent="🎯 fitted — the ball is in the valley floor."; }
+  else { m.className=""; m.textContent=""; }
+}
+function redraw(){ drawFit(); drawLoss(); readout(); }
+
+function stepTrain(){
+  if(blown) return;
+  const [gw,gb]=grad();
+  w-=lr*gw; b-=lr*gb; tstep++;
+  if(!isFinite(w)||!isFinite(b)||Math.abs(w)>1e4||Math.abs(b)>1e4){ blown=true; if(timer){clearInterval(timer);timer=null;} }
+  redraw();
+}
+$("t-step1").onclick=stepTrain;
+$("t-run").onclick=()=>{ if(timer){clearInterval(timer);timer=null;return;}
+  let n=0; timer=setInterval(()=>{ stepTrain(); if(++n>=60||blown){clearInterval(timer);timer=null;} },45); };
+$("t-rand").onclick=()=>{ w=WMIN+Math.random()*(WMAX-WMIN); b=BMIN+Math.random()*(BMAX-BMIN);
+  tstep=0; blown=false; redraw(); };
+$("t-data").onclick=()=>{ newData(); tstep=0; blown=false; redraw(); };
+$("t-lr").oninput=e=>{ lr=e.target.value/1000;
+  $("t-lrv").textContent=lr.toFixed(3)+(lr>0.20?" 💥risky":lr<0.02?" 🐌slow":" ok"); };
+
+/* drag the ball on the landscape */
+function landPick(ev){
+  const r=CL.getBoundingClientRect();
+  const t=ev.touches?ev.touches[0]:ev;
+  const i=(t.clientX-r.left)/r.width, j=(t.clientY-r.top)/r.height;
+  w=WMIN+i*(WMAX-WMIN); b=BMAX-j*(BMAX-BMIN); blown=false; redraw();
+}
+let dragging=false;
+CL.addEventListener("pointerdown",e=>{dragging=true;CL.setPointerCapture(e.pointerId);landPick(e);});
+CL.addEventListener("pointermove",e=>{if(dragging)landPick(e);});
+CL.addEventListener("pointerup",()=>dragging=false);
+
+/* click the data plot to add a point */
+CF.addEventListener("click",e=>{
+  const r=CF.getBoundingClientRect(), pad=38/CF.width, padY=38/CF.height;
+  const i=(e.clientX-r.left)/r.width, j=(e.clientY-r.top)/r.height;
+  const x=clamp((i-pad)/(1-pad-0.023)*XMAX,0,XMAX);
+  const y=clamp((1-padY-j)/(1-padY-0.03)*YMAX,0,YMAX);
+  data.push([x,y]); redraw();
+});
+
+$("t-lr").oninput({target:$("t-lr")});
+newData(); w=WMIN+Math.random()*2; b=BMIN+Math.random()*3; redraw();
+
+
+/* ==================================================================
+   GAME 4 — THE PERCEPTRON  (real weighted sum, real 1958 learning rule)
+   ================================================================== */
+const FACTORS=["cost","distance","programme","weather","friend",
+               "class size","food","brochure","sports","parents"];
+let pcX=FACTORS.map(()=>Math.round(Math.random()*10));
+let pcW=FACTORS.map(()=>0);
+let pcB=-1.0;
+let pcSet=[];
+
+function pcBuild(){
+  $("pc-inputs").innerHTML=FACTORS.map((f,i)=>
+    `<div class="slider"><label>${f}</label>
+     <input type="range" id="pi${i}" min="0" max="10" value="${pcX[i]}">
+     <span class="sval" id="piv${i}">${pcX[i]}</span></div>`).join("");
+  $("pc-weights").innerHTML=FACTORS.map((f,i)=>
+    `<div class="slider"><label>${f}</label>
+     <input type="range" id="pw${i}" min="-50" max="50" value="${Math.round(pcW[i]*10)}">
+     <span class="sval" id="pwv${i}">${pcW[i].toFixed(2)}</span></div>`).join("");
+  FACTORS.forEach((f,i)=>{
+    $("pi"+i).oninput=e=>{ pcX[i]=+e.target.value; $("piv"+i).textContent=pcX[i]; pcScore(); };
+    $("pw"+i).oninput=e=>{ pcW[i]=e.target.value/10; $("pwv"+i).textContent=pcW[i].toFixed(2); pcScore(); };
+  });
+}
+function pcSync(){
+  FACTORS.forEach((f,i)=>{
+    $("pi"+i).value=pcX[i];  $("piv"+i).textContent=pcX[i];
+    $("pw"+i).value=Math.round(pcW[i]*10); $("pwv"+i).textContent=pcW[i].toFixed(2);
+  });
+  $("pc-bias").value=Math.round(pcB*10); $("pc-biasv").textContent=pcB.toFixed(2);
+}
+/* the weighted sum, for real */
+function pcTotal(x){ let t=pcB; for(let i=0;i<FACTORS.length;i++) t+=(x[i]/10)*pcW[i]; return t; }
+function pcScore(){
+  const t=pcTotal(pcX);
+  $("pc-out").innerHTML=`total <b>${t.toFixed(2)}</b>`;
+  const v=$("pc-verdict");
+  if(t>0){ v.className="goal win"; v.textContent="✓ clears the bar. The neuron fires, you apply."; }
+  else   { v.className="goal";     v.textContent="✗ under the bar. Nothing happens."; }
+}
+function pcCount(){ $("pc-set").innerHTML=`labelled so far: <b>${pcSet.length}</b>`+
+  (pcSet.length?` &nbsp;(${pcSet.filter(e=>e.y).length} apply, ${pcSet.filter(e=>!e.y).length} skip)`:""); }
+
+$("pc-bias").oninput=e=>{ pcB=e.target.value/10; $("pc-biasv").textContent=pcB.toFixed(2); pcScore(); };
+$("pc-roll").onclick=()=>{ pcX=FACTORS.map(()=>Math.round(Math.random()*10)); pcSync(); pcScore(); };
+$("pc-yes").onclick=()=>{ pcSet.push({x:pcX.slice(),y:1}); pcCount(); $("pc-roll").onclick(); };
+$("pc-no").onclick =()=>{ pcSet.push({x:pcX.slice(),y:0}); pcCount(); $("pc-roll").onclick(); };
+$("pc-clear").onclick=()=>{ pcSet=[]; pcCount(); $("pc-status").textContent=""; };
+
+/* Rosenblatt's rule: predict, and when wrong, nudge toward the answer */
+$("pc-learn").onclick=()=>{
+  if(pcSet.length<2){ $("pc-status").innerHTML="Label at least two colleges first, one of each."; return; }
+  const lr=0.08; let pass=0, wrong=1;
+  while(pass<400 && wrong>0){
+    wrong=0;
+    for(const e of pcSet){
+      const pred=pcTotal(e.x)>0?1:0;
+      if(pred!==e.y){
+        wrong++;
+        const d=lr*(e.y-pred);
+        for(let i=0;i<FACTORS.length;i++) pcW[i]=clamp(pcW[i]+d*(e.x[i]/10),-5,5);
+        pcB=clamp(pcB+d,-6,6);
+      }
+    }
+    pass++;
+  }
+  pcSync(); pcScore();
+  $("pc-status").innerHTML = wrong===0
+    ? `<b>settled after ${pass} passes.</b> Those weights now agree with every label you gave it. Nobody typed them in.`
+    : `ran 400 passes and <b>${wrong}</b> still wrong. It cannot find one straight rule that fits your labels, so it will keep going round for ever. That is the next game.`;
+};
+pcBuild(); pcCount(); pcScore();
+
+/* ---------- THE WALL: XOR ---------- */
+const XPTS=[[0,0,0],[0,1,1],[1,0,1],[1,1,0]];
+const XC=$("xc"), xg=XC.getContext("2d");
+let xw1=0.60, xw2=0.60, xb=-0.30;
+let xNet=null, xTimer=null;
+
+const css=n=>getComputedStyle(document.body).getPropertyValue(n).trim();
+const P=54, S=(v)=>P+v*(XC.width-2*P);
+
+function xFire(x,y){ return xw1*x+xw2*y+xb>0?1:0; }
+function xCorrect(){ return XPTS.filter(p=>xFire(p[0],p[1])===p[2]).length; }
+
+/* a real 2-2-1 sigmoid network, trained by backprop */
+function xInit(){
+  const r=()=>(Math.random()*2-1)*2;
+  return {w:[[r(),r()],[r(),r()]], b:[r(),r()], v:[r(),r()], c:r()};
+}
+const sig=z=>1/(1+Math.exp(-z));
+function xFwd(n,x,y){
+  const h=[sig(n.w[0][0]*x+n.w[0][1]*y+n.b[0]), sig(n.w[1][0]*x+n.w[1][1]*y+n.b[1])];
+  return {h, o:sig(n.v[0]*h[0]+n.v[1]*h[1]+n.c)};
+}
+function xTrain(n,steps){
+  const lr=0.9;
+  for(let s=0;s<steps;s++) for(const [x,y,t] of XPTS){
+    const {h,o}=xFwd(n,x,y);
+    const dO=(o-t);                       /* cross-entropy through a sigmoid */
+    const dH=[dO*n.v[0]*h[0]*(1-h[0]), dO*n.v[1]*h[1]*(1-h[1])];
+    n.v[0]-=lr*dO*h[0]; n.v[1]-=lr*dO*h[1]; n.c-=lr*dO;
+    for(let j=0;j<2;j++){ n.w[j][0]-=lr*dH[j]*x; n.w[j][1]-=lr*dH[j]*y; n.b[j]-=lr*dH[j]; }
+  }
+}
+function xLoss(n){ let L=0; for(const [x,y,t] of XPTS){ const o=xFwd(n,x,y).o;
+  L+=-(t*Math.log(o+1e-9)+(1-t)*Math.log(1-o+1e-9)); } return L/4; }
+
+function xDraw(){
+  const W=XC.width,H=XC.height;
+  xg.clearRect(0,0,W,H);
+  /* decision surface, computed point by point */
+  const step=8;
+  for(let px=P;px<W-P;px+=step) for(let py=P;py<H-P;py+=step){
+    const x=(px-P)/(W-2*P), y=1-(py-P)/(H-2*P);
+    let on;
+    if(xNet) on=xFwd(xNet,x,y).o>0.5; else on=xFire(x,y)===1;
+    xg.fillStyle = on ? "rgba(76,141,255,.20)" : "rgba(240,122,166,.13)";
+    xg.fillRect(px,py,step,step);
+  }
+  xg.strokeStyle=css("--line")||"#2b3444"; xg.lineWidth=1.5;
+  xg.strokeRect(P,P,W-2*P,H-2*P);
+  /* the four points */
+  for(const [x,y,t] of XPTS){
+    const cx=S(x), cy=H-S(y);
+    const got = xNet ? (xFwd(xNet,x,y).o>0.5?1:0) : xFire(x,y);
+    xg.beginPath(); xg.arc(cx,cy,15,0,7);
+    xg.fillStyle = t? (css("--accent")||"#4c8dff") : (css("--pink")||"#f07aa6");
+    xg.fill();
+    xg.lineWidth=4; xg.strokeStyle = got===t ? (css("--accent2")||"#37d39b") : "#e0344f";
+    xg.stroke();
+    xg.fillStyle="#fff"; xg.font="600 13px ui-monospace,monospace"; xg.textAlign="center";
+    xg.fillText(t?"1":"0",cx,cy+5);
+  }
+  xg.fillStyle=css("--faint")||"#6b7688"; xg.font="12px ui-monospace,monospace";
+  xg.textAlign="center"; xg.fillText("blue should fire · pink should not", W/2, H-16);
+  const c=xCorrect();
+  $("x-score").innerHTML = xNet
+    ? `correct: <b>${XPTS.filter(p=>(xFwd(xNet,p[0],p[1]).o>0.5?1:0)===p[2]).length}</b> of 4 &nbsp;· loss <b>${xLoss(xNet).toFixed(3)}</b>`
+    : `correct: <b>${c}</b> of 4`;
+}
+function xSliders(){
+  $("x-w1v").textContent=xw1.toFixed(2); $("x-w2v").textContent=xw2.toFixed(2); $("x-bv").textContent=xb.toFixed(2);
+}
+$("x-w1").oninput=e=>{ xw1=e.target.value/100; xNet=null; xSliders(); xDraw(); };
+$("x-w2").oninput=e=>{ xw2=e.target.value/100; xNet=null; xSliders(); xDraw(); };
+$("x-b").oninput =e=>{ xb =e.target.value/100; xNet=null; xSliders(); xDraw(); };
+
+$("x-learn").onclick=()=>{
+  xNet=null;
+  const lr=0.1; let pass=0, wrong=1;
+  while(pass<500 && wrong>0){
+    wrong=0;
+    for(const [x,y,t] of XPTS){
+      const pred=xFire(x,y);
+      if(pred!==t){ wrong++; const d=lr*(t-pred); xw1+=d*x; xw2+=d*y; xb+=d; }
+    }
+    pass++;
+  }
+  $("x-w1").value=Math.round(clamp(xw1,-1,1)*100);
+  $("x-w2").value=Math.round(clamp(xw2,-1,1)*100);
+  $("x-b").value =Math.round(clamp(xb,-1.5,1.5)*100);
+  xSliders(); xDraw();
+  $("x-msg").innerHTML = wrong===0
+    ? "settled."
+    : `<span class="boom">500 passes, still ${wrong} wrong.</span> It is not stuck, it is going round in circles, and it would do that for ever. No straight line exists.`;
+};
+$("x-hidden").onclick=()=>{
+  if(xTimer) clearInterval(xTimer);
+  xNet=xInit(); let n=0, restarts=0;
+  $("x-hmsg").textContent="training two hidden units with backprop…";
+  xTimer=setInterval(()=>{
+    xTrain(xNet,15); n+=15; xDraw();
+    /* stuck on a bad start. In 2002 you changed the initialisation and ran it
+       again, so that is exactly what this does, and it says so. */
+    if(n%6000===0 && xLoss(xNet)>0.25 && restarts<3){
+      xNet=xInit(); restarts++;
+      $("x-hmsg").innerHTML=`stuck on a bad start, reinitialising and going again (${restarts})…`;
+    }
+    if(xLoss(xNet)<0.02 || n>=24000){
+      clearInterval(xTimer); xTimer=null;
+      $("x-hmsg").innerHTML = xLoss(xNet)<0.02
+        ? `<span class="win">solved in ${n} passes${restarts?`, after ${restarts} restart${restarts>1?"s":""}`:""}.</span> The boundary is not a straight line any more, because two neurons bent it.`
+        : `stalled at loss ${xLoss(xNet).toFixed(3)} after ${restarts} restarts. Press it again. Unlucky starting weights were a real way to lose an afternoon, and that is Part 5.`;
+    }
+  },40);
+};
+$("x-reset").onclick=()=>{ if(xTimer){clearInterval(xTimer);xTimer=null;} xNet=null; $("x-hmsg").textContent=""; $("x-msg").textContent=""; xDraw(); };
+xSliders(); xDraw();
+
+/* ================= TABS ================= */
+const GAMES=["ngram","percep","train","attn"];
+/* every deep-linked anchor, and which game owns it */
+const ANCHORS={parrot:"ngram", college:"percep", xor:"percep", downhill:"train", spotlight:"attn"};
+
+function showGame(g,scrollTo){
+  if(!GAMES.includes(g)) return;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on", x.dataset.game===g));
+  GAMES.forEach(id=>$(id).classList.toggle("hidden", id!==g));
+  if(g==="attn") renderAttn();
+  if(g==="train") redraw();
+  if(g==="percep") xDraw();
+  if(scrollTo){ const el=$(scrollTo); if(el) el.scrollIntoView({block:"start"}); }
+}
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>showGame(t.dataset.game); });
+
+/* a card can live inside a hidden section, so the browser cannot scroll to it
+   on its own. Open the owning game first, then scroll. */
+function fromHash(){
+  const id=location.hash.replace("#","");
+  if(ANCHORS[id]) showGame(ANCHORS[id], id);
+}
+window.addEventListener("hashchange",fromHash);
+fromHash();
+</script>
+</body>
+</html>
