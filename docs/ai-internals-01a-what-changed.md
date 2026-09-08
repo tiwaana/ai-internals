@@ -66,7 +66,7 @@ Nobody writes the rules in a neural network. They are discovered from data, and 
 
 People did try to keep both. Neuro-fuzzy systems, ANFIS around 1993, learned the membership functions from data while keeping them legible. It was a serious line of research in my era and it lost.
 
-That bill has not gone away, it just gets paid later. It is most of why Act II has a whole part about evaluation: we cannot read the model, so we are reduced to poking it from the outside and writing down how it behaves.
+That bill has not gone away, it just gets paid later. It is most of why Act III has a whole part about evaluation: we cannot read the model, so we are reduced to poking it from the outside and writing down how it behaves.
 
 > **Say this out loud:** "The math mostly did not change. We got GPUs, we got the whole internet as training data, and we got the transformer in 2017, and it turned out that guessing the next word at that scale produces abilities nobody put in on purpose."
 

@@ -63,10 +63,10 @@ Each piece has a name you will see for the rest of your life, so let us do them 
   <path class="hot" d="M112,79  C 170,79  195,92 240,100"/>
   <path class="ln"  d="M112,121 C 170,121 195,110 240,104"/>
   <path class="ln"  d="M112,163 C 170,163 200,120 240,108"/>
-  <text class="wl" x="150" y="30">w₁ = 0.9</text>
-  <text class="wl" x="150" y="72">w₂ = 0.4</text>
-  <text class="wl" x="150" y="140" fill="var(--faint,#6b7688)">w₃ = 0.8</text>
-  <text class="wl" x="150" y="182" fill="var(--faint,#6b7688)">w₄ = 0.1</text>
+  <text class="wl" x="150" y="30">cost ×0.9</text>
+  <text class="wl" x="150" y="72">distance ×0.4</text>
+  <text class="wl" x="150" y="140" fill="var(--faint,#6b7688)">programme ×0.8</text>
+  <text class="wl" x="150" y="182" fill="var(--faint,#6b7688)">friend ×0.1</text>
   <circle class="nb" cx="272" cy="102" r="32"/><text class="nt" x="272" y="107" text-anchor="middle">Σ</text>
   <text class="sm" x="272" y="152" text-anchor="middle">weighted sum</text>
   <text class="sm" x="272" y="167" text-anchor="middle">+ bias</text>
@@ -84,7 +84,7 @@ Each piece has a name you will see for the rest of your life, so let us do them 
 
 **Bias.** One extra number added at the end that is not attached to any input. It is how picky you are in general. Turn it up and you apply everywhere, turn it down and nothing clears the bar. Your baseline mood, and yes, that is roughly how it behaves.
 
-**Activation.** The bend. Rosenblatt used a hard threshold, over the bar or not, nothing in between. That turns out to be the thing that made these impossible to train in a stack, and we pay for it in Part 4.
+**Activation.** The bend. Rosenblatt used a hard threshold, over the bar or not, nothing in between. That turns out to be the thing that made these impossible to train in a stack, and we pay for it in Part 7.
 
 **Output.** The answer.
 
@@ -94,9 +94,9 @@ Here is the thing worth stopping on.
 
 Nowhere in that diagram is there a rule about colleges. There is no `if cost > 40000 then reject`. There is no list of good schools. The structure is identical whether you are picking a college, detecting spam, or predicting the next word in a sentence.
 
-**All of the knowledge is in the weights.** Change `w₁` from 0.9 to 0.1 and you have become a different person about money, using the same brain.
+**All of the knowledge is in the weights.** Turn the cost knob down from 0.9 to 0.1 and you have become a different person about money, using the same brain.
 
-That is the whole reason Part 3 of this series is about who owns the weights file, and the reason the weights are the expensive part while the architecture gets published in papers for free. The shape is cheap. The numbers are the thing.
+That is the whole reason Part 16 of this series is about who owns the weights file, and the reason the weights are the expensive part while the architecture gets published in papers for free. The shape is cheap. The numbers are the thing.
 
 ## One neuron cannot do very much
 

@@ -14,7 +14,7 @@ conversation with an AI engineer and push back on parts of it.
 
 - `docs/` — the parts, as markdown.
 - `index.html` — the reader. Plain HTML, no build step, no framework.
-- `playground.html` — five toys that genuinely compute. The perceptron really
+- `playground.html` — the toys, and they genuinely compute. The perceptron really
   fits its weights, gradient descent really diverges when you push the learning
   rate up, the attention arcs are real softmax weights. Nothing is animated.
 - `tiny_transformer.py` — a full transformer forward pass in ~150 lines of NumPy.
@@ -25,6 +25,18 @@ conversation with an AI engineer and push back on parts of it.
     python3 -m http.server 8080
 
 Then open <http://localhost:8080/>.
+
+## Licence
+
+The writing (everything in `docs/`) is **Creative Commons Attribution-NonCommercial-ShareAlike 4.0**.
+Share it, translate it, teach from it, remix it. Credit Anand Tiwari, do not sell it,
+and pass it on under the same terms.
+
+The code (`tiny_transformer.py`, `train_hello.py`, `index.html`, `playground.html`)
+is **MIT**, because teaching code nobody is allowed to use commercially is not much
+use as teaching code.
+
+See `LICENSE`.
 
 ## Corrections
 

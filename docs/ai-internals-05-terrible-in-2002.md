@@ -52,7 +52,7 @@ I think about that more than is comfortable.
 
 ImageNet was Fei-Fei Li's project, and it was not a clever algorithm, it was 1.2 million labelled images. Someone finally built the ingredients. There was an annual competition on it, and progress was the usual grind of hand-designed feature extractors, with error rates improving a point or so a year.
 
-Then Alex Krizhevsky, Ilya Sutskever and Geoffrey Hinton entered a deep convolutional network called **AlexNet**. It won with a 15.3% error rate. Second place, using the established methods, got 26.2%.
+Then Alex Krizhevsky, Ilya Sutskever and Geoffrey Hinton entered a deep network called **AlexNet**, built out of layers that slide a small window over the image looking for one pattern at a time, which is what convolutional means and is the only time you will need the word here. It won with a 15.3% error rate. Second place, using the established methods, got 26.2%.
 
 That is not winning. In a mature competition, a ten point gap is the field being told it has been doing the wrong thing.
 
@@ -82,7 +82,7 @@ So when Part 6 hands you a table of vectors and tells you that closeness carries
 
 There is a pattern here that will repeat, and once you have it you will spot it in every part that follows.
 
-**Algorithm plus data plus compute plus engineering equals capability.** Not one of those alone. AlexNet is the first clean demonstration, the transformer in Part 7 is the second, and the scaling laws in Act II are the field finally writing the pattern down as an equation.
+**Algorithm plus data plus compute plus engineering equals capability.** Not one of those alone. AlexNet is the first clean demonstration, the transformer in Part 9 is the second, and the scaling laws in Part 11 are the field finally writing the pattern down as an equation.
 
 It also means that when you read that some approach was tried and failed, the useful follow-up is not *why was the idea wrong.* It is **at what scale was it tried, and has anything changed since.**
 

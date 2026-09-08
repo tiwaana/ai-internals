@@ -88,7 +88,7 @@ There is no line in there that says trophies are large. No database, no rules yo
 
 That file is the actual subject of this series. What is in it, how it got that way, who is allowed to have a copy, how you squeeze it down small enough to fit on a cheap graphics card, and how it gets served to a lot of people at once without costing a fortune.
 
-There is a five gigabyte GPU sitting under my desk, which turns out to decide what I am allowed to run .. we get to that in Act III, once there is something worth running.
+There is a five gigabyte GPU sitting under my desk, which turns out to decide what I am allowed to run .. we get to that in Act IV, once there is something worth running.
 
 Part 2 builds the smallest piece of one, and we go up from there.
 
@@ -96,11 +96,13 @@ Part 2 builds the smallest piece of one, and we go up from there.
 
 By the end of this you should be able to sit with an AI or data engineer, follow the whole conversation, and push back on parts of it.
 
-**Act I, the machine.** What is inside the file. Weights, tokens, layers, attention. We build a working transformer in about 150 lines of Python and watch it run.
+**Act I, what I knew.** The foundations, all of which existed in 2002 and none of which were enough. One neuron, what learning actually means, backpropagation, and why knowing all of it got the field nowhere for twenty years.
 
-**Act II, the making.** How a pile of random numbers turns into something useful. Training data, fine tuning, why models have a personality, and why benchmark scores mostly lie.
+**Act II, what changed.** The machinery that was genuinely new. How text becomes numbers, what depth buys you, what came before attention, attention itself, and then we build a working transformer in about 150 lines of Python and watch it run.
 
-**Act III, the delivery.** How it actually gets used. Running one yourself, what it costs per million words, how models look things up, how they use tools, and how they fail.
+**Act III, making it talk.** How a pile of random numbers becomes something you can have a conversation with. Fine tuning, why models have a personality, why they make things up, and why benchmark scores mostly lie.
+
+**Act IV, the delivery.** How it actually gets used. Who owns the file, running one yourself, what it costs per million words, how models look things up, and how they use tools.
 
 > **Say this out loud:** "It cannot be looking anything up. There are more possible sentences than there are atoms, so the only way to guess the next word that well is to have compressed the rules that produce them."
 

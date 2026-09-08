@@ -131,3 +131,5 @@ Read the whole series the way it teaches you to read anything a model produces. 
 ---
 
 *This is a learning log, so it grows, and it is wrong in places. If you spot an error or want something covered, that is the point. Tell me.*
+
+*The writing here is [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Take it, translate it, teach from it, build on it. Credit me, do not sell it, and leave what you make as open as you found it. The code and the playground toys are MIT, because teaching code nobody may use is not much use.*

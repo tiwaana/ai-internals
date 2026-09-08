@@ -70,9 +70,11 @@ In PyTorch this is a single line, `loss.backward()`, and a whole generation of p
 
 Enough. Let us run one.
 
-Small model so the by-hand backprop stays readable: predict the next character from the previous two. Embed, one hidden layer, softmax. The four steps are identical to what trains a transformer, and only the model in the middle is bigger.
+Small model so the by-hand backprop stays readable: predict the next character from the previous two. Each character is turned into a short list of numbers, those go through one layer of knobs, and softmax turns what comes out into percentages. The four steps are identical to what trains a transformer, and only the model in the middle is bigger.
 
 > **Download and run:** [`train_hello.py`](train_hello.py) (`pip install numpy`). No GPU, no framework.
+
+**If you do not write Python, skip the block.** The printout in the next section is the part that matters and it is plain numbers. If you do want to look, three things and it reads like English: `@` is the weighted sum from Part 2 done to a pile of numbers at once, a name starting with `d` is "the blame belonging to this thing", and `.T` flips a grid on its side so two things line up, which is bookkeeping and not an idea.
 
 ```python
 for step in range(2001):
@@ -84,7 +86,7 @@ for step in range(2001):
     dlogits = probs.copy(); dlogits[np.arange(N), Y] -= 1; dlogits /= N
     dW2 = h.T @ dlogits;      db2 = dlogits.sum(0)
     dh  = dlogits @ W2.T
-    dhpre = dh * (hpre > 0)              # gradient back through ReLU
+    dhpre = dh * (hpre > 0)              # blame stops at the bend (Part 5 names it)
     dW1 = emb.T @ dhpre;      db1 = dhpre.sum(0)
     # ... (scatter gradients back into the embedding table) ...
     # 4) UPDATE — everybody take one step downhill

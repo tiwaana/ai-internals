@@ -142,7 +142,7 @@ Three things are visible right there, and all three were predicted in Part 9.
 
 **Every row sums to 1.0.** That is softmax doing what it said it would, distributing exactly 100% of each token's attention.
 
-**It is 11 by 11.** Twenty-two tokens would give a 22 by 22 grid, four times the cells. That is the `n²` cost from Part 9, sitting in front of you as a printed array. Act III turns it into gigabytes.
+**It is 11 by 11.** Twenty-two tokens would give a 22 by 22 grid, four times the cells. That is the seating-chart cost from Part 9, sitting in front of you as a printed array. Act IV turns it into gigabytes.
 
 And through all six layers, `x` stays `(11, 16)`. Vector in, same size vector out, every single layer. The shape rule from Part 7, proven rather than asserted.
 

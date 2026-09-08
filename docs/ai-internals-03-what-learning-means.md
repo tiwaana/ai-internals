@@ -20,9 +20,7 @@ The usual one for prediction is **cross-entropy**, which sounds worse than it is
 loss = −log(the probability the model gave to the correct answer)
 ```
 
-Try it with actual numbers, because it behaves nicely.
-
-You do not need to work that out. You need to know how it behaves, which is this:
+Read that out loud as: **how surprised should the model have been by the right answer.** `log` is a squashing function, and it is there to turn a probability into a penalty. You will never have to compute one, and nobody will ask you to. What you want is how the penalty behaves, which is this:
 
 | The model gave the right answer... | Loss |
 |---|---|

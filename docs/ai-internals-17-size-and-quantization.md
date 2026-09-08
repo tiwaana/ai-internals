@@ -14,7 +14,9 @@ B is billion. A 7B model has roughly 7 billion weights, which are the knobs from
 
 That number is the model's raw capacity. Roughly, how much it can know and how subtly it can reason. It is the number everyone quotes.
 
-But a parameter is a number, and here is the question a beginner never asks and an engineer always does. **Stored in how many bits?**
+But think about what you are actually being told. Seven billion is *how many* knobs there are. It says nothing about how precisely each knob's position was written down, and those are two different facts about the same model. You can note somebody's weight as 72.4 kilos or as 72, and it is the same person either way, on less paper.
+
+So here is the question a beginner never asks and an engineer always does. **Stored in how many bits?**
 
 That is the hidden second dimension. A model is never just "7B." It is 7B *at some precision*, and all of the memory math lives in the second half of that sentence.
 
@@ -59,7 +61,7 @@ Quantization asks whether you really need every decimal.
 
 1. Take a block of weights, say 32 of them.
 2. Find their range, lowest to highest.
-3. Chop that range into a small number of **buckets**. At 4 bits you get 2⁴ = 16 buckets. At 8 bits, 256.
+3. Chop that range into a small number of **buckets**. Four bits can count to sixteen, so at 4 bits you get 16 buckets. Eight bits gets you 256.
 4. Round each weight to its nearest bucket, and store the bucket number plus one shared scale factor for the whole block.
 
 <svg viewBox="0 0 720 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quantization to 16 buckets">
@@ -119,7 +121,7 @@ Going from 16 bits to 4 typically costs a few percent of quality and buys you **
 
 Weights are not the only thing sitting in memory.
 
-When the model reads your prompt it stores intermediate values for every token it has seen, called the **KV cache**. It grows with your context length, meaning how much text you have fed it.
+As the model reads your prompt it keeps notes in the margin about every token it has already seen, so it does not have to work them out again for the next word. Those notes are the **KV cache**, the thing Part 9 said was sitting in GPU memory next to the weights. More text means more margin, so it grows with your context length.
 
 ```
 VRAM used ≈ quantized weights + KV cache (grows with context) + overhead
@@ -127,7 +129,7 @@ VRAM used ≈ quantized weights + KV cache (grows with context) + overhead
 
 On my 5 GB card, a 3.5 GB Q4 7B model leaves about a gigabyte for context. So I run short contexts, or push some layers onto the CPU and accept that it gets slower. That layer split is a knob you learn to tune. Ollama and llama.cpp set it automatically and let you override.
 
-Why the cache grows the way it does is the `n × n` attention grid from Part 9.
+Why the cache grows the way it does is the seating chart from Part 9: every word scored against every other word, so twice the words is four times the squares.
 
 ## Putting it together
 

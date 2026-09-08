@@ -99,7 +99,7 @@ Look at that first step again. Every token compared against every token. Think o
 
 So double the length of your text and you **quadruple** the grid.
 
-This is the **KV cache**, the thing sitting in GPU memory alongside the weights, and it is the honest reason long context is expensive in both compute and VRAM. It is not a billing decision, it is a square. Act III turns this into actual gigabytes on my actual card.
+This is the **KV cache**, the thing sitting in GPU memory alongside the weights, and it is the honest reason long context is expensive in both compute and VRAM. It is not a billing decision, it is a square. Act IV turns this into actual gigabytes on my actual card.
 
 ## Multi-head
 
@@ -128,7 +128,7 @@ final vectors → unembed → probabilities → sample → next token → (loop)
 
 That is the complete skeleton of every large language model in existence. Claude, GPT, Llama, Qwen, all of them. They differ in size, in training data, and in tuning. They do not differ in this shape.
 
-Which is a good moment to say something out loud: you now know the architecture. Not a summary of it, the actual thing. What is left in Act I is running it and training it.
+Which is a good moment to say something out loud: you now know the architecture. Not a summary of it, the actual thing. What is left in Act II is running it and training it.
 
 > **Say this out loud:** "Attention is every token asking every other token how relevant it is, then taking a weighted average of what they know. And it is an n by n grid, which is why doubling your context quadruples the cost."
 

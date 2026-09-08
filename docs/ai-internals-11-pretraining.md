@@ -62,7 +62,7 @@ Some numbers, because the abstraction hides them.
 
 Training a frontier model runs into the tens or hundreds of millions of dollars in compute. Thousands of GPUs, weeks of wall-clock time, in buildings drawing power measured in megawatts. This is why Part 16's question of who gets the weights file matters commercially, and why open-weight releases are a genuinely strange gift.
 
-It is also why the field cares so much about **scaling laws**, which are empirical curves saying how much better the loss gets when you add parameters, data or compute. They are the reason anyone was willing to spend a hundred million dollars before seeing the result. You could extrapolate the curve and it kept being right. That is Act II.
+It is also why the field cares so much about **scaling laws**, which are empirical curves saying how much better the loss gets when you add parameters, data or compute. They are the reason anyone was willing to spend a hundred million dollars before seeing the result. You could extrapolate the curve and it kept being right.
 
 ## What you have now
 

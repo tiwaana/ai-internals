@@ -115,7 +115,7 @@ None of those are answerable through a window. And here is the good news, which 
 
 Which is fortunate, given what is under my desk.
 
-> **Say this out loud:** "Open weight and open source are not the same thing. You get the cake, not the recipe, and usually with a license attached."
+> **Say this out loud:** "Open weight and open source are not the same thing. You get the dish, not the recipe, and usually with a license attached."
 
 > **The question that takes you further:** *if the weights are public but the training data is not, what can you still not find out about a model?*
 

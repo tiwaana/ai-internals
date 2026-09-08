@@ -113,11 +113,11 @@ One honest footnote, since the result is almost always quoted without it. When y
 
 Measuring closeness is usually done with **cosine similarity**, which asks whether two vectors point in the same direction and ignores how long they are. It is a dot product with the lengths divided out, and a dot product, from the refresher, is a weighted sum.
 
-This is also, exactly, what a **vector database** stores. When somebody says their product does semantic search, or RAG, this is the machinery: embed everything, then find the nearest neighbours to your question in that space. We do that properly in Act III.
+This is also, exactly, what a **vector database** stores. When somebody says their product does semantic search, or RAG, this is the machinery: embed everything, then find the nearest neighbours to your question in that space. We do that properly in Act IV.
 
 ## The catch that sets up everything after this
 
-There is a problem with what I just described, and it is the reason the rest of Act I exists.
+There is a problem with what I just described, and it is the reason the rest of Act II exists.
 
 The embedding table is a **lookup**. One token, one vector, always the same.
 
