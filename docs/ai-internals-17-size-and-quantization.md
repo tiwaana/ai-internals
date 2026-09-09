@@ -1,6 +1,6 @@
 # Part 17 — Size & Quantization
 
-*[← Part 16](ai-internals-16-open-vs-closed-weights.md) · [Series index](ai-internals-00-index.md)*
+*[← Part 16](ai-internals-16-open-vs-closed-weights.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md)*
 
 There is a graphics card under my desk with 5 gigabytes of memory on it. A Quadro P2200. It is not a bad card, it is just not a 2026 card, and 5 GB is the number that decides what I am allowed to do.
 

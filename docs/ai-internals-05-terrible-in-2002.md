@@ -1,6 +1,6 @@
 # Part 5 — Why It Was All Kind of Terrible in 2002
 
-*[← Part 4](ai-internals-04-backpropagation.md) · [Series index](ai-internals-00-index.md) · Next: [Tokens & Embeddings →](ai-internals-06-tokens-and-embeddings.md)*
+*[← Part 4](ai-internals-04-backpropagation.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Tokens & Embeddings →](ai-internals-06-tokens-and-embeddings.md)*
 
 You now know everything I knew in 2002. Neuron, loss, gradient descent, backprop. All of it was published, none of it was secret, and I could write the training loop from memory.
 

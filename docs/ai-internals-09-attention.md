@@ -1,6 +1,6 @@
 # Part 9 — Attention
 
-*[← Part 8](ai-internals-08-the-memory-problem.md) · [Series index](ai-internals-00-index.md) · Next: [Build a Transformer →](ai-internals-10-tiny-transformer.md)*
+*[← Part 8](ai-internals-08-the-memory-problem.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Build a Transformer →](ai-internals-10-tiny-transformer.md)*
 
 In 2017, eight researchers at Google published a paper about machine translation. They called it *Attention Is All You Need*, which is a nod to a Beatles song, and they put a footnote on the author list saying the order was random because everyone contributed equally.
 

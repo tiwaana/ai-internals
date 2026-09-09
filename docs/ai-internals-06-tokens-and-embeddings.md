@@ -1,6 +1,6 @@
 # Part 6 — Tokens & Embeddings
 
-*[← Part 5](ai-internals-05-terrible-in-2002.md) · [Series index](ai-internals-00-index.md) · Next: [Layers & Depth →](ai-internals-07-layers-and-depth.md)*
+*[← Part 5](ai-internals-05-terrible-in-2002.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Layers & Depth →](ai-internals-07-layers-and-depth.md)*
 
 Ask a model how many times the letter r appears in "strawberry."
 

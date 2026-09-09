@@ -1,6 +1,6 @@
 # Part 8 — The Memory Problem
 
-*[← Part 7](ai-internals-07-layers-and-depth.md) · [Series index](ai-internals-00-index.md) · Next: [Attention →](ai-internals-09-attention.md)*
+*[← Part 7](ai-internals-07-layers-and-depth.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Attention →](ai-internals-09-attention.md)*
 
 Here is a task. Read a thousand word article, then write down the next word.
 

@@ -1,6 +1,6 @@
 # Part 3 — What "Learning" Actually Means
 
-*[← Part 2](ai-internals-02-the-perceptron.md) · [Series index](ai-internals-00-index.md) · Next: [Backpropagation →](ai-internals-04-backpropagation.md)*
+*[← Part 2](ai-internals-02-the-perceptron.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Backpropagation →](ai-internals-04-backpropagation.md)*
 
 You have a neuron. It has weights. All of its knowledge is in those weights, which is a lovely thing to say right up until somebody asks where the numbers come from.
 

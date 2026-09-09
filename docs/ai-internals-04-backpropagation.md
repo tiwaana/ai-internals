@@ -1,6 +1,6 @@
 # Part 4 — Backpropagation
 
-*[← Part 3](ai-internals-03-what-learning-means.md) · [Series index](ai-internals-00-index.md) · Next: [Why It Was All Kind of Terrible in 2002 →](ai-internals-05-terrible-in-2002.md)*
+*[← Part 3](ai-internals-03-what-learning-means.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Why It Was All Kind of Terrible in 2002 →](ai-internals-05-terrible-in-2002.md)*
 
 You have a network. It got the answer wrong. Somewhere inside are a billion weights, and you need to know, for every one of them, how much of the blame it personally deserves.
 

@@ -1,6 +1,6 @@
 # Part 11 — Pretraining: "It's Just Predicting the Next Word"
 
-*[← Part 10](ai-internals-10-tiny-transformer.md) · [Series index](ai-internals-00-index.md)*
+*[← Part 10](ai-internals-10-tiny-transformer.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md)*
 
 Somebody is going to say it to you. Possibly at a dinner party, possibly in a meeting where a budget is at stake.
 
@@ -72,7 +72,7 @@ You know what a neuron is, how it learns, why backprop makes learning possible, 
 
 You could sit down with the 2017 transformer paper and follow it. Not skim it. Follow it.
 
-What you cannot do yet is explain why a raw model trained this way will happily help you with something appalling, why it has a personality, or why anyone trusts a benchmark. A model that has only been pretrained is not a chatbot, it is a very well-read text continuation engine with no manners and no idea it is in a conversation.
+What you cannot do yet is explain why a raw model trained this way will happily help you with something appalling, why it has a personality, or why anyone trusts a benchmark. A model that has only been pretrained is not a chatbot, it is a very well-read text continuation engine with no manners and no idea it is in a conversation. That is what people mean when they say **base model**, and it is worth having the phrase, because the difference between one of those and the thing you actually talk to is the whole of Act III.
 
 Turning that into something you can talk to is a separate process, it happens after pretraining, and it is Act III.
 

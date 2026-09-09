@@ -1,6 +1,6 @@
 # Part 1a — What Changed While I Was Away
 
-*[Series index](ai-internals-00-index.md) · Next: [Part 1b — The Guessing Machine →](ai-internals-01b-the-guessing-machine.md)*
+*[Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Part 1b — The Guessing Machine →](ai-internals-01b-the-guessing-machine.md)*
 
 Read this sentence.
 

@@ -1,6 +1,6 @@
 # Part 1b — The Guessing Machine
 
-*[← Part 1a](ai-internals-01a-what-changed.md) · [Series index](ai-internals-00-index.md) · Next: [The Perceptron →](ai-internals-02-the-perceptron.md)*
+*[← Part 1a](ai-internals-01a-what-changed.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [The Perceptron →](ai-internals-02-the-perceptron.md)*
 
 That was the story. This is the prep work.
 
@@ -52,7 +52,7 @@ Feed it *"The trophy didn't fit in the case because it was too"* and you get bac
   <g><rect class="bar2" x="120" y="154" width="9" height="22" rx="3"/><text class="lb" x="112" y="170" text-anchor="end">purple</text><text class="pc" x="139" y="170">0.1%</text></g>
 </svg>
 
-Look at `purple` at the bottom. It did not get zero. Nothing gets zero. Turn the randomness up far enough and the model will eventually say purple, and that is a fair chunk of what people are pointing at when they say a model hallucinated.
+Look at `purple` at the bottom. It did not get zero. Nothing gets zero. Turn the randomness up far enough and the model will eventually say purple, and that is a fair chunk of what people are pointing at when they say a model hallucinated. That randomness dial has a name, **temperature**, and it is one people say out loud: turn it down and the model takes the safe word every time, turn it up and it starts reaching into the tail.
 
 My first reaction was, fine, so it is autocomplete. My phone does this above the keyboard.
 

@@ -108,6 +108,8 @@
 
 Start at Part 1a and go in order, each part assumes the last. Linked titles are written and live. Unlinked ones are the plan, and the plan changes. Every part ends the same way: one sentence you can **say out loud** in a real conversation, one **question that takes you further**, and a **checkpoint** to test yourself against. The code in Parts 4 and 10 runs on any machine with Python and NumPy.
 
+There is also a **[glossary](ai-internals-glossary.md)**, linked from every part, holding every word the series has defined and where it was defined. You will meet these words out of order, because somebody will say one to you three weeks after you read the part it came from. It marks which terms are worth owning and which ones you are allowed to forget the name of, and it grows as the series does.
+
 The goal is not only to hand you answers. By the end you should know which questions are worth asking, which is the more useful half.
 
 ## The series was co-written by the thing it explains

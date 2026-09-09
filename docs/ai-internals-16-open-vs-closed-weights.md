@@ -1,6 +1,6 @@
 # Part 16 — Open vs. Closed Weights
 
-*Act IV · [Series index](ai-internals-00-index.md) · Next: [Size & Quantization →](ai-internals-17-size-and-quantization.md)*
+*Act IV · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Size & Quantization →](ai-internals-17-size-and-quantization.md)*
 
 In February 2023 Meta released a model called LLaMA. Not to the public. You filled in a form, said you were a researcher, and they sent you a download link.
 

@@ -1,6 +1,6 @@
 # Part 7 — Layers & Depth
 
-*[← Part 6](ai-internals-06-tokens-and-embeddings.md) · [Series index](ai-internals-00-index.md) · Next: [The Memory Problem →](ai-internals-08-the-memory-problem.md)*
+*[← Part 6](ai-internals-06-tokens-and-embeddings.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [The Memory Problem →](ai-internals-08-the-memory-problem.md)*
 
 Let me offer you a bet.
 

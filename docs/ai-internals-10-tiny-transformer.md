@@ -1,6 +1,6 @@
 # Part 10 — Build a Transformer
 
-*[← Part 9](ai-internals-09-attention.md) · [Series index](ai-internals-00-index.md) · Next: [Pretraining →](ai-internals-11-pretraining.md)*
+*[← Part 9](ai-internals-09-attention.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Pretraining →](ai-internals-11-pretraining.md)*
 
 Enough drawing.
 
@@ -25,7 +25,7 @@ If you do want to look, four things are worth knowing and then it mostly reads l
 
 The parts so far cover almost everything below, but three pieces turn up in the code that we have not met in prose, and all three are small. They are also in every real model, so they are worth having.
 
-**Position.** Attention, as I described it in Part 9, has no sense of order. Every token looks at every other token in one shot, and a shot has no left or right in it. Which means *dog bites man* and *man bites dog* would arrive as the exact same soup. The fix is blunt and it works: alongside the vector that says which word this is, add a second vector that says where it sat in the sentence. In the code that is `pos_table`, and it gets added straight onto the embedding. Word identity plus seat number, in one vector.
+**Position.** Attention, as I described it in Part 9, has no sense of order. Every token looks at every other token in one shot, and a shot has no left or right in it. Which means *dog bites man* and *man bites dog* would arrive as the exact same soup. The fix is blunt and it works: alongside the vector that says which word this is, add a second vector that says where it sat in the sentence. That second vector is a **positional embedding**, in the code it is `pos_table`, and it gets added straight onto the word's own. Word identity plus seat number, in one vector.
 
 **Adding instead of replacing.** Look at the two lines in the layer loop and you will see `x = x + something` rather than `x = something`. That is a **residual connection**, and it says each layer contributes a correction rather than throwing out the work of every layer before it. Back in the kitchen, each station adjusts the dish and passes it on. It does not start again from raw ingredients. There is a second reason too, and Part 8 already set it up: addition is kind to the learning signal in a way that repeated multiplication is not, so the signal can travel back down through eighty layers without fading to nothing. Residuals are most of why very deep networks can be trained at all.
 
@@ -119,6 +119,8 @@ token IDs (T=11): [3, 2, 4, 4, 5, 0, 7, 5, 6, 4, 1]
 ```
 
 **Embed.** Those 11 IDs become 11 vectors of length 16, shape `(11, 16)`. Text is now geometry.
+
+**Unembed.** At the far end the final vector is scored against all 8 characters, giving one raw score per character. Those raw scores are called **logits**, which is a word you will hear and which means nothing more frightening than *the numbers before softmax turns them into percentages*.
 
 **Attention, and this is the one to stare at.** Here is the real 11 by 11 softmax grid out of layer 0, head 0.
 

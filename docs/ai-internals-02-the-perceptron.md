@@ -1,6 +1,6 @@
 # Part 2 — The Perceptron
 
-*[← Part 1b](ai-internals-01b-the-guessing-machine.md) · [Series index](ai-internals-00-index.md) · Next: [What "Learning" Actually Means →](ai-internals-03-what-learning-means.md)*
+*[← Part 1b](ai-internals-01b-the-guessing-machine.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [What "Learning" Actually Means →](ai-internals-03-what-learning-means.md)*
 
 Before we go anywhere near a language model, I want to build the smallest possible piece of one, because everything after this is that piece repeated a few billion times with better organisation.
 
