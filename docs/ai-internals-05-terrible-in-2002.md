@@ -32,6 +32,8 @@ So the layers nearest the input got told essentially nothing about what they had
 
 The culprit was the S-shaped bend everyone used between layers, called a **sigmoid**. It flattens out at both ends, and anything flat passes almost nothing backwards. That is worth a name because it is the standard story for why deep learning stalled, and you will hear it called **the vanishing gradient problem**.
 
+> 🤫 **Play:** [**The Fade**](playground.html#fade) in the playground is a line of people passing a whisper back. Set it to ten layers with the old bend and watch how much of the message reaches the front: about four hundred-thousandths of one percent. Then press the 2012 bend. **The weights do not change, only the bend does**, and the whisper arrives intact. That single swap is most of what this part is about, and you can do it in one click.
+
 **We initialised badly and we did not know it.** Starting weights were picked by rules of thumb that were, in hindsight, wrong, and that quietly made the vanishing problem worse.
 
 Every one of those was fixable. Not one of them was a flaw in the idea.

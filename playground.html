@@ -51,6 +51,9 @@
     background:var(--accent);border:1px solid var(--accent);color:#fff}
   .btn.ghost{background:var(--panel2);border-color:var(--line);color:var(--ink)}
   .btn:active{transform:translateY(1px)}
+  .bigstat{text-align:center;padding:10px 0}
+  .bigstat span{font:700 44px ui-monospace,monospace;color:var(--accent);display:block;line-height:1}
+  .bigstat small{color:var(--dim);font:12px ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
   .row2{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
 
   .note{font-size:14px;color:var(--dim);background:var(--panel2);border-left:3px solid var(--accent);
@@ -140,7 +143,9 @@
     <div class="tab on" data-game="ngram">📚 Feed the Parrot <span style="opacity:.7">· prediction</span></div>
     <div class="tab" data-game="percep">🎓 Pick a College <span style="opacity:.7">· one neuron</span></div>
     <div class="tab" data-game="train">⛷️ Downhill <span style="opacity:.7">· training</span></div>
+    <div class="tab" data-game="deep">🪜 Depth <span style="opacity:.7">· why layers work</span></div>
     <div class="tab" data-game="attn">🔦 Spotlight <span style="opacity:.7">· attention</span></div>
+    <div class="tab" data-game="size">🗜️ Squeeze <span style="opacity:.7">· quantization</span></div>
   </div>
 
   <!-- ================= GAME 4: THE PERCEPTRON ================= -->
@@ -350,6 +355,146 @@
       that is a genuine divergence, the single most common way real training runs die. Drag the ball somewhere
       terrible and hit Run to watch it find its way home. <code>train_hello.py</code> does exactly this — same loop,
       same arithmetic — just with hundreds of weights instead of two, in a landscape nobody can draw.</p>
+
+    <div class="card" id="blame">
+      <h3>🍳 Check the Blame — one trip round the kitchen, or ask every cook</h3>
+      <p class="hint">A kitchen sends out a bad dish. You need to know how much of it was each cook's fault.
+        There are two ways to find out, they give the <b>same answer</b>, and one of them is why modern AI
+        exists at all. This is a real 8→12→1 network with 121 weights, and both methods are computed for real.</p>
+
+      <div class="panes">
+        <div class="pane"><h4>ask every cook, one at a time</h4>
+          <p class="hint">Nudge one weight, cook the whole dish again, see if it got better. Put it back.
+            Next weight. This is the obvious method and nobody uses it.</p>
+          <div class="bigstat"><span id="fd-runs">0</span><small>kitchen runs</small></div>
+          <button class="btn ghost" id="fd-go">Ask them all</button>
+        </div>
+        <div class="pane"><h4>one trip back through the kitchen</h4>
+          <p class="hint">Tell the last station what was wrong. It works out its own share and passes the rest
+            back. This is <b>backpropagation</b>.</p>
+          <div class="bigstat"><span id="bp-runs">0</span><small>kitchen runs</small></div>
+          <button class="btn" id="bp-go">Pass the blame back</button>
+        </div>
+      </div>
+
+      <h4 style="margin-top:18px">how much each cook is to blame</h4>
+      <p class="hint">Twelve of the 121 weights, so it fits. Blue bars are the slow method, green outlines are
+        backprop. If backprop is right they land on top of each other.</p>
+      <canvas id="bl-c" width="900" height="200"></canvas>
+      <div class="readout"><span id="bl-msg"></span></div>
+
+      <div class="row2"><button class="btn ghost" id="bl-reset">🔀 New kitchen</button></div>
+
+      <p class="note"><b>What you're learning:</b> both methods produce the same blame, so backprop is not an
+        approximation and it is not a trick. It is the same answer, found in one pass instead of one pass per
+        weight. This kitchen has 121 weights, so the slow way costs 121 runs and the fast way costs 1. A 7B model
+        has seven billion weights. At one millisecond a run, the slow way is <b>eleven days to take a single
+        training step</b>, and you need hundreds of thousands of steps. That gap is the whole reason any of this
+        is possible, and it is Part 4.</p>
+    </div>
+  </section>
+
+  <!-- ================= DEPTH: THE FADE + THE FOLD ================= -->
+  <section id="deep" class="hidden">
+    <div class="card" id="fade">
+      <h3>🤫 The Fade — why nobody could train a deep network</h3>
+      <p class="hint">Whisper a message down a line of people. Each one passes it on and a little is lost, and
+        by the end of a long line there is nothing left. That is exactly what happens to the <i>blame</i> as it
+        travels back through a deep network, and it is why the field was stuck for twenty years. Real network,
+        real forward pass, real chain of derivatives on the way back.</p>
+
+      <canvas id="fd-c" width="900" height="260"></canvas>
+
+      <div class="readout">
+        <span>reaches the first layer <b class="lo" id="fade-pct"></b></span>
+        <span id="fade-msg"></span>
+      </div>
+
+      <div class="slider"><label>🪜 how deep</label>
+        <input type="range" id="fade-n" min="2" max="14" value="8"><span class="sval" id="fade-nv"></span></div>
+
+      <div class="row2">
+        <button class="btn" id="fade-sig">😴 the old bend (sigmoid)</button>
+        <button class="btn" id="fade-relu">⚡ the 2012 bend (ReLU)</button>
+        <button class="btn ghost" id="fade-new">🎲 new weights</button>
+      </div>
+
+      <p class="note"><b>What you're learning:</b> the old S-shaped bend flattens at both ends, and anything flat
+        passes almost nothing backwards. Push it to ten layers and the front of the network hears essentially
+        nothing about its own mistakes, so it never improves and it is decoration. Swap in the bend that does not
+        flatten and the whisper arrives intact. That one change is most of what let deep networks train in 2012,
+        and it is Part 5.</p>
+    </div>
+
+    <div class="card" id="fold">
+      <h3>🍳 The Fold — I will take your hundred layers with my one</h3>
+      <p class="hint">Say every station in a kitchen may only do one thing: scale a quantity. Station one doubles,
+        station two halves, station three triples. Three stations, three sets of instructions. And you could have
+        written <i>multiply by 1.5</i> on a single card at the door. Here are three real layers of weights, and
+        one layer that is the three of them multiplied together in advance. Same order in, and watch what
+        comes out.</p>
+
+      <div class="panes">
+        <div class="pane"><h4>three layers, 27 knobs</h4><canvas id="fo-a" width="420" height="200"></canvas></div>
+        <div class="pane"><h4>one layer, 9 knobs</h4><canvas id="fo-b" width="420" height="200"></canvas></div>
+      </div>
+
+      <div class="readout"><span id="fo-msg"></span></div>
+
+      <div class="slider"><label>🥄 ingredient one</label>
+        <input type="range" id="fo-x0" min="-100" max="100" value="60"><span class="sval" id="fo-x0v"></span></div>
+      <div class="slider"><label>🧂 ingredient two</label>
+        <input type="range" id="fo-x1" min="-100" max="100" value="-30"><span class="sval" id="fo-x1v"></span></div>
+      <div class="slider"><label>🌶️ ingredient three</label>
+        <input type="range" id="fo-x2" min="-100" max="100" value="45"><span class="sval" id="fo-x2v"></span></div>
+
+      <div class="row2">
+        <button class="btn" id="fo-bend">➰ put a bend between the layers</button>
+        <button class="btn ghost" id="fo-new">🎲 new kitchen</button>
+      </div>
+
+      <p class="note"><b>What you're learning:</b> with no bend between them, stacked layers <b>fold</b> into a
+        single layer that gives an identical answer. Not close to it, identical, and you can move every slider
+        looking for a case where it is not. The depth bought you nothing and your extra knobs were decoration.
+        Add the bend and the fold becomes impossible, because a bend does not fold, and now each layer is genuinely
+        working on something the one before it made. That is the only reason depth means anything, and it is
+        Part 7.</p>
+    </div>
+  </section>
+
+  <!-- ================= SQUEEZE: QUANTIZATION ================= -->
+  <section id="size" class="hidden">
+    <div class="card" id="squeeze">
+      <h3>🗜️ Squeeze — save the model too small and see what breaks</h3>
+      <p class="hint">This is the same 2-2-1 network from <b>The Wall</b>, trained here for real until it solves
+        the problem no single neuron can. Then we save it badly. Every weight gets rounded to one of a small
+        number of buckets, exactly the way a photo saved at low quality gets rounded into blocks. Four bits gives
+        sixteen buckets. Two bits gives four. Watch where the picture stops being the picture.</p>
+
+      <div class="row2"><button class="btn" id="sq-train">🎓 train it first</button>
+        <span class="sval" id="sq-state">not trained yet</span></div>
+
+      <div class="panes">
+        <div class="pane"><h4>full precision, what it learned</h4><canvas id="sq-a" width="420" height="420"></canvas></div>
+        <div class="pane"><h4>squeezed to <span id="sq-bt">4</span> bits</h4><canvas id="sq-b" width="420" height="420"></canvas></div>
+      </div>
+
+      <div class="readout">
+        <span>buckets per weight <b id="sq-buckets"></b></span>
+        <span>size on disk <b id="sq-size"></b></span>
+        <span>still gets right <b class="lo" id="sq-acc"></b></span>
+        <span id="sq-msg"></span>
+      </div>
+
+      <div class="slider"><label>🗜️ bits per weight</label>
+        <input type="range" id="sq-bits" min="1" max="16" value="4"><span class="sval" id="sq-bv"></span></div>
+
+      <p class="note"><b>What you're learning:</b> every weight comes out slightly wrong and the model still
+        works, because no single weight was load-bearing and the knowledge is smeared across all of them. That is
+        why a 7B model that needs 14 GB at full precision fits in 3.5 GB at four bits, which is the difference
+        between running on the graphics card under my desk and not running at all. Drag it down to two bits and
+        the boundary collapses, which is the cliff people mean when they say four bits is the sweet spot. Part 17.</p>
+    </div>
   </section>
 </div>
 
@@ -946,17 +1091,277 @@ $("x-hidden").onclick=()=>{
 $("x-reset").onclick=()=>{ if(xTimer){clearInterval(xTimer);xTimer=null;} xNet=null; $("x-hmsg").textContent=""; $("x-msg").textContent=""; xDraw(); };
 xSliders(); xDraw();
 
+
+/* ==================================================================
+   GAME 5 — CHECK THE BLAME (backprop vs nudging every weight)
+   ================================================================== */
+/* A real 8 -> 12 -> 1 network. 121 weights. Both methods are computed. */
+const BL_IN=8, BL_H=12;
+let blNet=null, blX=null, blTarget=0.75, blFD=null, blBP=null;
+
+function blInit(){
+  const r=()=>(Math.random()*2-1)*0.8;
+  blNet={W1:Array.from({length:BL_H},()=>Array.from({length:BL_IN},r)),
+         b1:Array.from({length:BL_H},r),
+         W2:Array.from({length:BL_H},r), b2:r()};
+  blX=Array.from({length:BL_IN},()=>Math.random()*2-1);
+  blFD=null; blBP=null;
+  $("fd-runs").textContent="0"; $("bp-runs").textContent="0";
+  $("bl-msg").textContent=""; blDraw();
+}
+function blFwd(n){
+  const h=[];
+  for(let j=0;j<BL_H;j++){ let z=n.b1[j];
+    for(let i=0;i<BL_IN;i++) z+=n.W1[j][i]*blX[i];
+    h.push(Math.tanh(z)); }
+  let o=n.b2; for(let j=0;j<BL_H;j++) o+=n.W2[j]*h[j];
+  return {h,o};
+}
+const blLoss=n=>{ const e=blFwd(n).o-blTarget; return 0.5*e*e; };
+const blCount=()=>BL_H*BL_IN + BL_H + BL_H + 1;      /* 121 */
+
+/* the obvious method: nudge one weight, cook the whole dish again */
+function blFiniteDiff(){
+  const eps=1e-5, out=[]; let runs=0;
+  for(let j=0;j<BL_H;j++) for(let i=0;i<BL_IN;i++){
+    const keep=blNet.W1[j][i];
+    blNet.W1[j][i]=keep+eps; const up=blLoss(blNet); runs++;
+    blNet.W1[j][i]=keep;     const at=blLoss(blNet); runs++;
+    out.push((up-at)/eps);
+  }
+  /* the remaining 25 weights cost a run each too, and we count them honestly */
+  runs += (BL_H + BL_H + 1) * 2;
+  return {g:out, runs:Math.round(runs/2)};   /* one "kitchen run" = one dish cooked */
+}
+/* one trip back through the kitchen */
+function blBackprop(){
+  const {h,o}=blFwd(blNet);
+  const dO=o-blTarget, out=[];
+  for(let j=0;j<BL_H;j++){
+    const dH=dO*blNet.W2[j]*(1-h[j]*h[j]);
+    for(let i=0;i<BL_IN;i++) out.push(dH*blX[i]);
+  }
+  return {g:out, runs:1};
+}
+function blDraw(){
+  const c=$("bl-c"), g=c.getContext("2d"), W=c.width, H=c.height, N=12, pad=30;
+  g.clearRect(0,0,W,H);
+  const bw=(W-2*pad)/N, mid=H-40;
+  g.strokeStyle=css("--line"); g.lineWidth=1.5;
+  g.beginPath(); g.moveTo(pad,mid); g.lineTo(W-pad,mid); g.stroke();
+  g.fillStyle=css("--faint"); g.font="12px ui-monospace,monospace";
+  g.fillText("twelve of the 121 weights",pad,H-14);
+  if(!blFD && !blBP) return;
+  const all=[...(blFD?blFD.g.slice(0,N):[]),...(blBP?blBP.g.slice(0,N):[])];
+  const mx=Math.max(...all.map(Math.abs),1e-9);
+  for(let k=0;k<N;k++){
+    const x=pad+k*bw+4, w=bw-8;
+    if(blFD){ const hgt=(blFD.g[k]/mx)*(mid-pad);
+      g.fillStyle="rgba(76,141,255,.85)"; g.fillRect(x,mid-hgt,w,hgt); }
+    if(blBP){ const hgt=(blBP.g[k]/mx)*(mid-pad);
+      g.strokeStyle="#37d39b"; g.lineWidth=3; g.strokeRect(x,mid-hgt,w,hgt); }
+  }
+}
+$("fd-go").onclick=()=>{
+  blFD=blFiniteDiff(); $("fd-runs").textContent=blFD.runs; blDraw(); blVerdict();
+};
+$("bp-go").onclick=()=>{
+  blBP=blBackprop(); $("bp-runs").textContent=blBP.runs; blDraw(); blVerdict();
+};
+$("bl-reset").onclick=blInit;
+function blVerdict(){
+  if(!blFD || !blBP){ $("bl-msg").textContent="run both, then compare the bars."; return; }
+  let worst=0;
+  for(let k=0;k<blFD.g.length;k++) worst=Math.max(worst,Math.abs(blFD.g[k]-blBP.g[k]));
+  const m=$("bl-msg");
+  m.className="win";
+  m.innerHTML=`same answer to ${Math.max(0,Math.floor(-Math.log10(worst+1e-15)))} decimal places, `
+    + `for <b>${blFD.runs}×</b> less work. Backprop is not an approximation.`;
+}
+blInit();
+
+/* ==================================================================
+   GAME 6 — THE FADE (vanishing gradient, computed layer by layer)
+   ================================================================== */
+let fadeW=[], fadeAct="sigmoid";
+const FADE_MAX=14;
+/* Positive weights near 1 on purpose: both bends get the SAME weights, so the
+   only thing that changes between the two runs is the bend itself. */
+function fadeNew(){ fadeW=Array.from({length:FADE_MAX},()=>0.85+Math.random()*0.30); fadeDraw(); }
+function fadeChain(){
+  const n=+$("fade-n").value, sigmoidal=fadeAct==="sigmoid";
+  let a=0.5; const acts=[];
+  for(let i=0;i<n;i++){ const z=fadeW[i]*a; a=sigmoidal?sig(z):Math.max(0,z); acts.push({z,a}); }
+  let g=1; const arriving=[1];
+  for(let i=n-1;i>=0;i--){
+    const d=sigmoidal ? acts[i].a*(1-acts[i].a) : (acts[i].z>0?1:0);
+    g=g*d*fadeW[i]; arriving.push(Math.abs(g));
+  }
+  return arriving;                      /* [at the loss, ... , at layer 1] */
+}
+function fadeDraw(){
+  const n=+$("fade-n").value, arr=fadeChain();
+  const c=$("fd-c"), g=c.getContext("2d"), W=c.width, H=c.height, pad=34;
+  g.clearRect(0,0,W,H);
+  const bw=(W-2*pad)/(n+1), base=H-52;
+  g.fillStyle=css("--faint"); g.font="12px ui-monospace,monospace";
+  g.fillText("the loss →",pad,H-16);
+  g.textAlign="right"; g.fillText("← layer 1, nearest the input",W-pad,H-16); g.textAlign="left";
+  for(let k=0;k<=n;k++){
+    const v=arr[k], x=pad+k*bw+3, w=bw-6;
+    const hgt=Math.max(1.5,(base-24)*Math.min(1,v));
+    g.fillStyle = v>0.02 ? "rgba(55,211,155,.85)" : v>0.0005 ? "rgba(244,184,96,.85)" : "rgba(240,122,166,.8)";
+    g.fillRect(x,base-hgt,w,hgt);
+    if(bw>36){ g.fillStyle=css("--dim"); g.font="11px ui-monospace,monospace";
+      g.fillText(k===0?"loss":("L"+(n-k+1)), x, base+16); }
+  }
+  const reach=arr[n];
+  /* ReLU can arrive slightly over 100%, which is real (it is the other failure,
+     exploding gradients) but reads as a bug here, so say "intact" instead. */
+  $("fade-pct").textContent = reach>=1 ? "intact"
+                            : reach>=0.001 ? (reach*100).toFixed(1)+"%"
+                            : reach>0 ? (reach*100).toPrecision(2)+"%" : "0%";
+  $("fade-nv").textContent = n+" layers";
+  const m=$("fade-msg");
+  if(fadeAct==="sigmoid" && reach<0.01){ m.className="boom";
+    m.textContent="the whisper died on the way. Layer 1 never finds out it was wrong, so it never improves."; }
+  else if(fadeAct==="relu"){ m.className="win";
+    m.textContent="the message arrives. Every layer hears about its own mistake, so depth finally trains."; }
+  else { m.className=""; m.textContent="shallow enough that something still gets through. Now make it deeper."; }
+}
+$("fade-n").oninput=fadeDraw;
+$("fade-sig").onclick=()=>{ fadeAct="sigmoid"; fadeDraw(); };
+$("fade-relu").onclick=()=>{ fadeAct="relu"; fadeDraw(); };
+$("fade-new").onclick=fadeNew;
+fadeNew();
+
+/* ==================================================================
+   GAME 7 — THE FOLD (three linear layers really do collapse into one)
+   ================================================================== */
+let foA=null, foB=null, foC=null, foFolded=null, foBend=false;
+const mat=()=>Array.from({length:3},()=>Array.from({length:3},()=>+( (Math.random()*2-1)*1.1 ).toFixed(3)));
+const mv=(M,v)=>M.map(r=>r.reduce((a,x,i)=>a+x*v[i],0));
+const mm=(A,B)=>A.map(r=>B[0].map((_,j)=>r.reduce((a,x,k)=>a+x*B[k][j],0)));
+function foNew(){
+  foA=mat(); foB=mat(); foC=mat();
+  foFolded=mm(foC,mm(foB,foA));        /* worked out once, in advance */
+  foDraw();
+}
+function foX(){ return [0,1,2].map(i=>+$("fo-x"+i).value/100); }
+function foBars(id,vals,colour){
+  const c=$(id), g=c.getContext("2d"), W=c.width, H=c.height, pad=26;
+  g.clearRect(0,0,W,H);
+  const mid=H/2, bw=(W-2*pad)/3;
+  g.strokeStyle=css("--line"); g.lineWidth=1.5;
+  g.beginPath(); g.moveTo(pad,mid); g.lineTo(W-pad,mid); g.stroke();
+  const mx=Math.max(...vals.map(Math.abs),0.5);
+  vals.forEach((v,i)=>{
+    const x=pad+i*bw+10, w=bw-20, hgt=(v/mx)*(mid-18);
+    g.fillStyle=colour; g.fillRect(x,mid-hgt,w,hgt);
+    g.fillStyle=css("--dim"); g.font="12px ui-monospace,monospace";
+    g.fillText(v.toFixed(4), x, v>=0?mid+16:mid-8);
+  });
+}
+function foDraw(){
+  const x=foX();
+  [0,1,2].forEach(i=>$("fo-x"+i+"v").textContent=(+$("fo-x"+i).value/100).toFixed(2));
+  let h=mv(foA,x);
+  if(foBend) h=h.map(v=>Math.max(0,v));
+  let h2=mv(foB,h);
+  if(foBend) h2=h2.map(v=>Math.max(0,v));
+  const deep=mv(foC,h2);
+  const flat=mv(foFolded,x);
+  foBars("fo-a",deep,"rgba(76,141,255,.85)");
+  foBars("fo-b",flat,"rgba(55,211,155,.85)");
+  const worst=Math.max(...deep.map((v,i)=>Math.abs(v-flat[i])));
+  const m=$("fo-msg");
+  if(worst<1e-9){ m.className="win";
+    m.innerHTML="<b>identical.</b> Every digit, every slider position. The three layers were one layer wearing a hat, and 18 of those 27 knobs were decoration."; }
+  else { m.className="boom";
+    m.innerHTML=`<b>different now</b>, by ${worst.toFixed(3)} on the worst of the three. A bend does not fold, so the layers cannot be multiplied together in advance any more. The depth started meaning something the moment you pressed that button.`; }
+  $("fo-bend").textContent = foBend ? "➰ take the bend out" : "➰ put a bend between the layers";
+}
+[0,1,2].forEach(i=>$("fo-x"+i).oninput=foDraw);
+$("fo-bend").onclick=()=>{ foBend=!foBend; foDraw(); };
+$("fo-new").onclick=foNew;
+foNew();
+
+/* ==================================================================
+   GAME 8 — SQUEEZE (real quantization of a network trained in-page)
+   ================================================================== */
+let sqNet=null;
+function sqFlat(n){ return [n.w[0][0],n.w[0][1],n.w[1][0],n.w[1][1],n.b[0],n.b[1],n.v[0],n.v[1],n.c]; }
+function sqBuild(a){ return {w:[[a[0],a[1]],[a[2],a[3]]], b:[a[4],a[5]], v:[a[6],a[7]], c:a[8]}; }
+/* one block, a shared scale, and a bucket number per weight. That is all
+   quantization is. */
+function sqQuant(n,bits){
+  const a=sqFlat(n), lo=Math.min(...a), hi=Math.max(...a);
+  const levels=Math.pow(2,bits)-1, step=(hi-lo)/levels || 1;
+  return {net:sqBuild(a.map(v=>lo+Math.round((v-lo)/step)*step)), levels:levels+1};
+}
+function sqTrain(){
+  $("sq-state").textContent="training…";
+  let net=xInit(), tries=0;
+  while(tries<40){ xTrain(net,3000); if(xLoss(net)<0.02) break; net=xInit(); tries++; }
+  sqNet=net;
+  $("sq-state").textContent = xLoss(net)<0.02
+    ? "trained, and it solved it" : "unlucky start, press it again";
+  sqDraw();
+}
+function sqSurface(id,net){
+  const c=$(id), g=c.getContext("2d"), W=c.width, H=c.height, pad=44, step=7;
+  g.clearRect(0,0,W,H);
+  if(!net){ g.fillStyle=css("--faint"); g.font="14px ui-monospace,monospace";
+    g.fillText("train it first",pad,H/2); return; }
+  for(let px=pad;px<W-pad;px+=step) for(let py=pad;py<H-pad;py+=step){
+    const x=(px-pad)/(W-2*pad), y=1-(py-pad)/(H-2*pad);
+    g.fillStyle = xFwd(net,x,y).o>0.5 ? "rgba(55,211,155,.30)" : "rgba(240,122,166,.26)";
+    g.fillRect(px,py,step,step);
+  }
+  for(const [x,y,t] of XPTS){
+    const px=pad+x*(W-2*pad), py=pad+(1-y)*(H-2*pad);
+    const ok=(xFwd(net,x,y).o>0.5)===(t===1);
+    g.beginPath(); g.arc(px,py,13,0,7);
+    g.fillStyle=t?"#37d39b":"#f07aa6"; g.fill();
+    g.lineWidth=4; g.strokeStyle=ok?"#fff":"#ff5d5d"; g.stroke();
+  }
+}
+function sqDraw(){
+  const bits=+$("sq-bits").value;
+  $("sq-bv").textContent=bits+" bits"; $("sq-bt").textContent=bits;
+  sqSurface("sq-a",sqNet);
+  if(!sqNet){ sqSurface("sq-b",null); return; }
+  const q=sqQuant(sqNet,bits);
+  sqSurface("sq-b",q.net);
+  const right=XPTS.filter(([x,y,t])=>(xFwd(q.net,x,y).o>0.5)===(t===1)).length;
+  $("sq-buckets").textContent=q.levels;
+  $("sq-size").textContent=(9*bits/8).toFixed(1)+" bytes  ·  a 7B model would be "+(7*bits/8).toFixed(1)+" GB";
+  $("sq-acc").textContent=right+" of 4";
+  const m=$("sq-msg");
+  if(right===4 && bits<=4){ m.className="win";
+    m.textContent="squeezed hard and it still works. Every weight is wrong and none of them mattered enough."; }
+  else if(right===4){ m.className=""; m.textContent="fine, but you are not saving much yet. Push it lower."; }
+  else { m.className="boom";
+    m.textContent="too few buckets. The weights collapsed into each other and the boundary went with them."; }
+}
+$("sq-bits").oninput=sqDraw;
+$("sq-train").onclick=sqTrain;
+sqDraw();
+
 /* ================= TABS ================= */
-const GAMES=["ngram","percep","train","attn"];
+const GAMES=["ngram","percep","train","deep","attn","size"];
 /* every deep-linked anchor, and which game owns it */
-const ANCHORS={parrot:"ngram", college:"percep", xor:"percep", downhill:"train", spotlight:"attn"};
+const ANCHORS={parrot:"ngram", college:"percep", xor:"percep", downhill:"train", blame:"train",
+                fade:"deep", fold:"deep", spotlight:"attn", squeeze:"size"};
 
 function showGame(g,scrollTo){
   if(!GAMES.includes(g)) return;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on", x.dataset.game===g));
   GAMES.forEach(id=>$(id).classList.toggle("hidden", id!==g));
   if(g==="attn") renderAttn();
-  if(g==="train") redraw();
+  if(g==="train"){ redraw(); blDraw(); }
+  if(g==="deep"){ fadeDraw(); foDraw(); }
+  if(g==="size") sqDraw();
   if(g==="percep") xDraw();
   if(scrollTo){ const el=$(scrollTo); if(el) el.scrollIntoView({block:"start"}); }
 }

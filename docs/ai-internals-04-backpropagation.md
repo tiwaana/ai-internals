@@ -56,6 +56,8 @@ The remarkable part is the cost. **One backward pass produces the gradient for e
 
 Eleven days becomes two milliseconds. That is the entire reason large models can be trained, and it is why backpropagation is the single most consequential algorithm in the field.
 
+> 🍳 **Play:** [**Check the Blame**](playground.html#blame) in the playground is a real network with 121 weights, and it works the blame out both ways. Press the slow button and watch the counter climb to 121 as it cooks the dish again for every single weight. Press the fast one and it says 1. Then look at the bars: the two methods produce the same answer, to six decimal places. Backprop is not an approximation and it is not a shortcut that costs you something. It is the same number, found in one pass.
+
 ## It is older than the hype
 
 The algorithm has been invented several times by people who did not know about each other. Seppo Linnainmaa published the general method in 1970, as a piece of numerical analysis with no neural networks anywhere near it. Paul Werbos applied it to networks in his 1974 thesis and it went largely unnoticed.

@@ -71,6 +71,8 @@ Nothing was lost in the folding. There was nothing there to lose.
 
 **Three stacked linear layers collapse into a single linear layer.** The depth bought you nothing. It is not close to one layer, it is exactly one layer, and that is a theorem, not an observation. That is the bet, and it is why every real network has something sitting between each pair of layers.
 
+> 🍳 **Play:** [**The Fold**](playground.html#fold) in the playground settles the bet without taking my word for it. Three real layers of weights on the left, on the right the same three multiplied together into one layer in advance. Move any slider you like and the two answers stay identical to the last digit, which means 18 of those 27 knobs were never doing anything. Then press the bend button and watch the two sides come apart.
+
 ## The bend
 
 Between layers, you apply a simple **nonlinear** function. Historically ReLU, which is just `max(0, x)`, meaning negatives become zero and everything else passes through. Modern LLMs use smoother relatives called SiLU or GELU.

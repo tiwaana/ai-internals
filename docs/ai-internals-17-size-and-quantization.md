@@ -115,6 +115,8 @@ You already know what this looks like, because you have seen a JPEG. Save a phot
 
 Going from 16 bits to 4 typically costs a few percent of quality and buys you **four times less memory**, plus faster inference because you are moving less data around. That is an outrageous bargain, and it is why almost everyone running models locally runs them quantized.
 
+> 🗜️ **Play:** [**Squeeze**](playground.html#squeeze) in the playground trains the little network from Part 2 until it genuinely solves the problem, then saves it badly. Drag the slider down and watch the picture of what it learned survive four bits, survive three, and fall apart at two, with the four test points going red as it goes. Nothing there is a recording. It quantizes the weights for real and runs the squeezed network to draw the second picture.
+
 **Where it breaks.** Push to 2 bits, sometimes 3, and quality falls off a cliff. Too few buckets, the approximation gets crude, and the model starts babbling. **Q4 is the widely agreed sweet spot.** You will see names like `Q4_K_M` in the GGUF files that llama.cpp and Ollama use. K means a smarter blocking method, M means medium size. It is what most people reach for and it is usually right.
 
 ## What else? The KV cache
