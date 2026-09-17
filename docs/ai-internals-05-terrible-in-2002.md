@@ -1,6 +1,6 @@
 # Part 5 — Why It Was All Kind of Terrible in 2002
 
-*[← Part 4](ai-internals-04-backpropagation.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [Tokens & Embeddings →](ai-internals-06-tokens-and-embeddings.md)*
+*[← Part 4](ai-internals-04-backpropagation.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: Tokens & Embeddings (not yet published)*
 
 You now know everything I knew in 2002. Neuron, loss, gradient descent, backprop. All of it was published, none of it was secret, and I could write the training loop from memory.
 
@@ -101,4 +101,4 @@ That question is worth more than most of the answers in this series.
 3. Everyone in 2002 read the evidence correctly and drew the wrong conclusion. What was the mistake exactly?
 4. Word2vec came out in 2013 and attention did not arrive until 2017. What did the field believe in those four years that it had no proof of before 2013?
 
-*Next: [Part 6 — Tokens & Embeddings →](ai-internals-06-tokens-and-embeddings.md), where we stop doing history and start on the machinery that was actually new.*
+*Next: Part 6 — Tokens & Embeddings (not yet published), where we stop doing history and start on the machinery that was actually new.*

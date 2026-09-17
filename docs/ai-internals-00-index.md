@@ -6,9 +6,9 @@
 
 > **Who this is for.** Anyone. No maths background assumed, and I mean that literally. There is no algebra in this series and you will never be asked to solve for anything. Where a formula turns up it is there to be pointed at, the way you would point at a wiring diagram. By the end you should be able to sit with an AI or data engineer, follow the whole conversation, and push back on parts of it.
 
-> 🎮 **Want to play instead of read?** The [**AI Playground**](playground.html) has three toys that really run the thing they explain: [*Feed the Parrot*](playground.html#parrot), a real n-gram model trained on text you can edit; [*Spotlight*](playground.html#spotlight), where you are the query in a genuine attention head; and [*Downhill*](playground.html#downhill), real gradient descent you can push until it diverges. Nothing in them is animated.
+> 🎮 **Want to play instead of read?** The [**AI Playground**](playground.html) has nine toys that really run the thing they explain, and each part links its own at the moment it matters: [*Feed the Parrot*](playground.html#parrot) (1b), [*Pick a College*](playground.html#college) and [*The Wall*](playground.html#xor) (2), [*Downhill*](playground.html#downhill) (3), [*Check the Blame*](playground.html#blame) (4), [*The Fade*](playground.html#fade) (5), [*The Fold*](playground.html#fold) (7), [*Spotlight*](playground.html#spotlight) (9) and [*Squeeze*](playground.html#squeeze) (17). Nothing in them is animated.
 
-<svg viewBox="0 0 720 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Series roadmap: Acts I and II written, Acts III and IV coming">
+<svg viewBox="0 0 720 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Series roadmap: Act I published, the rest coming">
   <style>
     .an{fill:var(--ink,#e6edf3);font:600 12px ui-monospace,monospace;}
     .ap{fill:var(--faint,#6b7688);font:10px ui-monospace,monospace;}
@@ -18,7 +18,7 @@
     .here{fill:var(--accent,#4c8dff);font:600 10px ui-monospace,monospace;}
   </style>
   <rect class="done" x="24"  y="34" width="186" height="26" rx="6"/>
-  <rect class="done" x="216" y="34" width="186" height="26" rx="6"/>
+  <rect class="todo" x="216" y="34" width="186" height="26" rx="6"/>
   <rect class="todo" x="408" y="34" width="124" height="26" rx="6"/>
   <rect class="todo" x="538" y="34" width="150" height="26" rx="6"/>
   <rect class="tick" x="55"  y="34" width="1.5" height="26"/>
@@ -31,6 +31,7 @@
   <rect class="tick" x="309" y="34" width="1.5" height="26"/>
   <rect class="tick" x="340" y="34" width="1.5" height="26"/>
   <rect class="tick" x="371" y="34" width="1.5" height="26"/>
+  <rect class="done" x="408" y="34" width="31" height="26" rx="6"/>
   <rect class="done" x="538" y="34" width="42" height="26" rx="6"/>
   <text class="an" x="117" y="80" text-anchor="middle">Act I — What I Knew</text>
   <text class="ap" x="117" y="96" text-anchor="middle">the foundations · 6 parts</text>
@@ -41,6 +42,7 @@
   <text class="an" x="613" y="80" text-anchor="middle">Act IV</text>
   <text class="ap" x="613" y="96" text-anchor="middle">The Delivery · 9</text>
   <text class="here" x="24" y="24">start here ↓</text>
+  <text class="ap" x="412" y="24">12 ↓</text>
   <text class="ap" x="545" y="24">16–17 ↓</text>
 </svg>
 
@@ -59,36 +61,36 @@
 
 ## Act II — What Changed
 
-*The machinery that was actually new, built in the order it had to be invented.* **All written.**
+*The machinery that was actually new, built in the order it had to be invented.* **Not published yet.**
 
 | Part | Title | What you get out of it |
 |------|-------|------------------------|
-| **6** | [Tokens & Embeddings](ai-internals-06-tokens-and-embeddings.md) | Why it cannot count the r's in strawberry, why Hindi costs more per sentence, and how text becomes geometry |
-| **7** | [Layers & Depth](ai-internals-07-layers-and-depth.md) | Why a hundred layers can compute exactly what one layer computes, and the one ingredient that fixes it |
-| **8** | [The Memory Problem](ai-internals-08-the-memory-problem.md) | RNNs, LSTMs, and the index card. The bottleneck you have to feel before the next part means anything |
-| **9** | [Attention](ai-internals-09-attention.md) | The 2017 idea that threw the index card away, and the moment "it" finally looks at "trophy" |
-| **10** | [Build a Transformer](ai-internals-10-tiny-transformer.md) | A complete, runnable transformer in ~150 lines of NumPy. Then go break it on purpose |
-| **11** | [Pretraining: "It's Just Predicting the Next Word"](ai-internals-11-pretraining.md) | What happens when you run that loop on everything, and how to win the dinner party argument |
+| **6** | Tokens & Embeddings (not yet published) | Why it cannot count the r's in strawberry, why Hindi costs more per sentence, and how text becomes geometry |
+| **7** | Layers & Depth (not yet published) | Why a hundred layers can compute exactly what one layer computes, and the one ingredient that fixes it |
+| **8** | The Memory Problem (not yet published) | RNNs, LSTMs, and the index card. The bottleneck you have to feel before the next part means anything |
+| **9** | Attention (not yet published) | The 2017 idea that threw the index card away, and the moment "it" finally looks at "trophy" |
+| **10** | Build a Transformer (not yet published) | A complete, runnable transformer in ~150 lines of NumPy. Then go break it on purpose |
+| **11** | Pretraining: "It's Just Predicting the Next Word" (not yet published) | What happens when you run that loop on everything, and how to win the dinner party argument |
 
 ## Act III — Making It Talk
 
-*A pretrained model is a very well-read text engine with no manners. This is the part that fixes that.* **Not written yet.**
+*A pretrained model is a very well-read text engine with no manners. This is the part that fixes that.* **Not published yet.**
 
 | Part | Title | What you will get out of it |
 |------|-------|------------------------------|
-| 12 | Fine-tuning & LoRA | Adapting a model you did not train, without retraining it |
+| **12** | Fine-tuning & LoRA (not yet published) | The Alpaca bedroom number: why the change to a model is megabytes when the model is gigabytes |
 | 13 | Post-training and personality | Why a raw model is not a chatbot, and who decides what it refuses |
 | 14 | Why it makes things up | Hallucination as a property of the objective, not a bug in it |
 | 15 | Evals | How you test something you cannot read, and why the numbers get gamed |
 
 ## Act IV — The Delivery
 
-*How you actually get one, run one, and pay for one.* **Two parts written so far.**
+*How you actually get one, run one, and pay for one.* **Not published yet.**
 
 | Part | Title | What you get out of it |
 |------|-------|------------------------|
-| **16** | [Open vs. Closed Weights](ai-internals-16-open-vs-closed-weights.md) | The LLaMA leak, why open weight is not open source, and what a license really restricts |
-| **17** | [Size & Quantization](ai-internals-17-size-and-quantization.md) | What "7B" costs in gigabytes, and why 4-bit maths fits a real model on a small card |
+| **16** | Open vs. Closed Weights (not yet published) | The LLaMA leak, why open weight is not open source, and what a license really restricts |
+| **17** | Size & Quantization (not yet published) | What "7B" costs in gigabytes, and why 4-bit maths fits a real model on a small card |
 | 18 | Run one yourself | Qwen2.5 on my own 5 GB card, start to finish |
 | 19 | Inference economics | Batching, the KV cache, tokens per second, cost per million |
 | 20 | Context, RAG & vector databases | Giving the model a library to look things up in |
@@ -97,7 +99,7 @@
 
 ## The Payoff
 
-*The part this was all for.* **Not written yet.**
+*The part this was all for.* **Not published yet.**
 
 | Part | Title | What you get out of it |
 |------|-------|------------------------|
