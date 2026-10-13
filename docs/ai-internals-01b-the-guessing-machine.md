@@ -94,17 +94,7 @@ That last part is not abstract for me. The graphics card under my desk has five 
 
 In Part 2 we start by building the smallest piece of a model, and then add to it step by step.
 
-## Where this is going
-
-By the end, you will be able to join a conversation with an AI or data engineer, follow what is being discussed, and confidently ask questions or push back.
-
-**Act I, what I knew.** The basics that were around in 2002, and why they were not enough. A single neuron, what learning really means, backpropagation, and why knowing all of it did not move the field forward for twenty years.
-
-**Act II, what changed.** The new breakthroughs. How text is turned into numbers, what deeper models buy you, what existed before attention, and attention itself. Then we build a working transformer in about 150 lines of Python and watch it run.
-
-**Act III, making it talk.** How a machine that only finishes your sentences turns into something you can actually talk to. Fine tuning, why models seem to have personalities, why they sometimes make things up, and why benchmark scores can be misleading.
-
-**Act IV, the delivery.** How these models are actually used. Who owns the files, how to squeeze one onto a small graphics card and run it yourself, what it costs per million words, how models search for information, how they use tools, and what happens when you let them run on their own.
+If you want to see the whole route before we set off, the map of the series is on the [series index](ai-internals-00-index.md).
 
 > **Say this out loud:** "It cannot be looking anything up. There are more possible sentences than there are atoms, so the only way to guess the next word that well is to have compressed the rules that produce them."
 
@@ -116,6 +106,6 @@ By the end, you will be able to join a conversation with an AI or data engineer,
 2. The model gave `purple` 0.1% instead of zero. Why would a model that never says anything unlikely actually be a worse model?
 3. A model is "just a function". What goes in, what comes out, and what does it do with the output before it runs again?
 
-If I have got something wrong in here, tell me. Half the reason I am publishing this is so somebody who knows better can correct me.
+If I have got something wrong in here, tell me.
 
 *Next: [Part 2 — The Perceptron →](ai-internals-02-the-perceptron.md), where we build one neuron and find out that all of this is a weighted sum wearing a hat.*
