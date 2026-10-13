@@ -2,13 +2,11 @@
 
 *[← Part 1b](ai-internals-01b-the-guessing-machine.md) · [Series index](ai-internals-00-index.md) · [Glossary](ai-internals-glossary.md) · Next: [What "Learning" Actually Means →](ai-internals-03-what-learning-means.md)*
 
-Before we go anywhere near a language model, I want to build the smallest possible piece of one, because everything after this is that piece repeated a few billion times with better organisation.
-
 Say you are picking a college. You have ten things you care about.
 
 - Cost
 - Distance from home
-- Whether the programme is any good
+- Whether the program is any good
 - Weather
 - Whether your friend is going
 - Class size
@@ -23,6 +21,8 @@ So you score each factor, mentally multiply each score by how much you care, add
 
 Congratulations, you are a perceptron.
 
+Remember the vending machine from Part 1b, the function that takes a coin in and puts chips out. This is the same shape. Ten factors go in, one decision comes out, apply or skip. A perceptron is the smallest function in this whole series, and every bigger one is built out of it.
+
 > 🎓 **Play:** [**Pick a College**](playground.html#college) in the playground is this neuron, with your ten factors and ten weights you can drag. The interesting button is the one that sets the weights for you. Label six or seven colleges as apply or skip, hit learn, and it fits the weights with Rosenblatt's own 1958 rule, which is one line long. Nothing there is animated. If your labels do not follow a consistent rule it genuinely never settles, and it tells you so.
 
 ## The whole thing, honestly
@@ -31,13 +31,15 @@ Score each thing you care about. Multiply each score by how much you care. Add u
 
 That is it. That is the entire object, and it is the smallest piece of every model in this series.
 
-That operation, **multiply each input by its own number and add up the results**, is called a **weighted sum**. Learn that phrase. It is the single most common thing anyone in this field will say to you, and it means exactly what you just did with the colleges and nothing more.
+That operation, **multiply each input by its own number and add up the results**, is called a **weighted sum**. It is the single most common thing anyone in this field will say to you, and it means exactly what you just did with the colleges and nothing more.
 
-You will also hear it called a **dot product**, which is the same operation with a more intimidating name. When somebody says a model is "mostly matrix multiplies," they mean it is doing enormous numbers of weighted sums at once. That is the whole sentence decoded. Frank Rosenblatt built it in 1958, and there was a physical machine, the Mark I Perceptron, with actual motors turning actual knobs to adjust the weights. It was meant to recognise shapes. The New York Times went to see it and reported that the Navy expected a machine that would be able to walk, talk, see, write, reproduce itself and be conscious of its existence.
+You will also hear it called a **dot product**, which is the same operation with a more intimidating name. When somebody says a model is "mostly matrix multiplies," they mean it is doing enormous numbers of weighted sums at once.
 
-It could tell some triangles from some squares.
+Frank Rosenblatt came up with it in 1958. That July the Navy showed it to the press, running as a program on an IBM 704, a computer that filled a room, and the New York Times reported that the Navy expected a machine that would be able to walk, talk, see, write, reproduce itself and be conscious of its existence.
 
-I want to flag that early, because AI has had this exact news cycle roughly every fifteen years since, and we are in one now. Knowing what the machine actually does is the only defence.
+It could tell whether a card had been marked on the left or on the right.
+
+The hardware version, the Mark I Perceptron, followed in 1960, with actual motors turning actual knobs to adjust the weights, and it learned to tell some letters apart. I want to flag the press coverage early, because AI has had that exact news cycle roughly every fifteen years since, and we are in one now.
 
 ## The parts, named
 
@@ -55,7 +57,7 @@ Each piece has a name you will see for the rest of your life, so let us do them 
   <g>
     <rect class="nb" x="16" y="24"  width="96" height="26" rx="5"/><text class="nt" x="64" y="42" text-anchor="middle">cost</text>
     <rect class="nb" x="16" y="66"  width="96" height="26" rx="5"/><text class="nt" x="64" y="84" text-anchor="middle">distance</text>
-    <rect class="nb" x="16" y="108" width="96" height="26" rx="5"/><text class="nt" x="64" y="126" text-anchor="middle">programme</text>
+    <rect class="nb" x="16" y="108" width="96" height="26" rx="5"/><text class="nt" x="64" y="126" text-anchor="middle">program</text>
     <rect class="nb" x="16" y="150" width="96" height="26" rx="5"/><text class="nt" x="64" y="168" text-anchor="middle">friend</text>
   </g>
   <text class="sm" x="64" y="14" text-anchor="middle">inputs</text>
@@ -65,7 +67,7 @@ Each piece has a name you will see for the rest of your life, so let us do them 
   <path class="ln"  d="M112,163 C 170,163 200,120 240,108"/>
   <text class="wl" x="150" y="30">cost ×0.9</text>
   <text class="wl" x="150" y="72">distance ×0.4</text>
-  <text class="wl" x="150" y="140" fill="var(--faint,#6b7688)">programme ×0.8</text>
+  <text class="wl" x="150" y="140" fill="var(--faint,#6b7688)">program ×0.8</text>
   <text class="wl" x="150" y="182" fill="var(--faint,#6b7688)">friend ×0.1</text>
   <circle class="nb" cx="272" cy="102" r="32"/><text class="nt" x="272" y="107" text-anchor="middle">Σ</text>
   <text class="sm" x="272" y="152" text-anchor="middle">weighted sum</text>
@@ -90,21 +92,19 @@ Each piece has a name you will see for the rest of your life, so let us do them 
 
 ## Where the knowledge lives
 
-Here is the thing worth stopping on.
+Nowhere in that diagram is there a rule about colleges. There is no `if cost > 40000 then reject`. There is no list of good schools. The structure is identical whether you are picking a college, detecting spam, or deciding that the word after *"the trophy didn't fit in the case because it was too"* is probably *big*.
 
-Nowhere in that diagram is there a rule about colleges. There is no `if cost > 40000 then reject`. There is no list of good schools. The structure is identical whether you are picking a college, detecting spam, or predicting the next word in a sentence.
+All of the knowledge is in the weights. Turn the cost knob down from 0.9 to 0.1 and you have become a different person about money, using the same brain.
 
-**All of the knowledge is in the weights.** Turn the cost knob down from 0.9 to 0.1 and you have become a different person about money, using the same brain.
-
-That is the whole reason Part 16 of this series is about who owns the weights file, and the reason the weights are the expensive part while the architecture gets published in papers for free. The shape is cheap. The numbers are the thing.
+That is the whole reason Part 16 of this series is about who owns the weights file, and the reason the weights are the expensive part while the architecture gets published in papers for free.
 
 ## One neuron cannot do very much
 
 In 1969, Marvin Minsky and Seymour Papert wrote a book called *Perceptrons* which proved, carefully and correctly, that a single one of these cannot learn XOR.
 
-The thing it cannot learn is this: **one or the other, but not both.** Cheese or ham, not cheese and ham. A five-year-old has this. (It has a name, XOR, which you can forget immediately. Nobody will say it to you.)
+The thing it cannot learn is this: **one or the other, but not both.** Cheese or ham, not cheese and ham, which a five-year-old has no trouble with. (It has a name, XOR, which you can forget immediately. Nobody will say it to you.)
 
-The reason is easy to see once drawn. One neuron splits the world with a single straight cut, and no single straight cut separates these four cases. Try it with a ruler, it genuinely cannot be done.
+The reason is easy to see once drawn. One neuron splits the world with a single straight cut, and no single straight cut separates these four cases. Try it with a ruler, it cannot be done.
 
 <svg viewBox="0 0 720 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="XOR is not linearly separable">
   <style>
@@ -122,16 +122,16 @@ The reason is easy to see once drawn. One neuron splits the world with a single 
   <text class="cap3" x="330" y="60">green = yes,  pink = no</text>
   <text class="cap3" x="330" y="82">a single neuron draws exactly one line</text>
   <text class="cap3" x="330" y="104">the dashed line is trying its best</text>
-  <text class="cap3" x="330" y="126">it will always get one point wrong</text>
+  <text class="cap3" x="330" y="126">it always gets at least one point wrong</text>
 </svg>
 
-The proof was right. The conclusion the field drew from it was that neural networks were a dead end, and funding dried up for most of the seventies. People call that the first AI winter.
+The proof was right. The conclusion the field drew from it was that neural networks were a dead end, and the book helped dry up funding for them for most of the seventies. It was part of what people now call the first AI winter.
 
 > 🧱 **Play:** [**The Wall**](playground.html#xor) is the same toy with the square above in it. Drag the line and try to get all four points right, then press let it try to learn and watch it fail properly, going round in circles for five hundred passes rather than getting stuck. Then add the hidden layer and watch the boundary stop being straight.
 
 What Minsky and Papert had actually shown was that *one* neuron is limited. Stack two layers and XOR is trivially solvable. Everybody knew that. What nobody had was a way to *train* a stack, and that would not arrive properly until 1986.
 
-So the field spent fifteen years stuck on a problem whose solution was already on the whiteboard, waiting for a method to make it learnable. If that sounds like Part 5, where the same thing happens again with data and GPUs, then you are already reading this series correctly.
+So the field spent fifteen years stuck on a problem whose solution was already on the whiteboard, waiting for a method to make it learnable. Keep that pattern in mind, the answer already sitting on the whiteboard while the field waits for something else to catch up. It happens again later in this story, and the second time the missing piece is not a method at all.
 
 > **Say this out loud:** "A neuron is a weighted sum plus a bias plus a bend. All the knowledge is in the weights, and the architecture is just the shape you pour them into."
 
@@ -142,5 +142,6 @@ So the field spent fifteen years stuck on a problem whose solution was already o
 1. Describe a neuron in one sentence, using the words input, weight, bias and activation.
 2. What does the bias do that the weights cannot?
 3. A single neuron cannot learn "one or the other but not both". What was true about that claim, and what did the field get wrong about what it meant?
+4. Somebody says a model is "mostly matrix multiplies". Roughly what are they telling you it spends its time doing?
 
-*Next: [Part 3 — What "Learning" Actually Means →](ai-internals-03-what-learning-means.md), which answers the question you should be asking by now.*
+*Next: [Part 3 — What "Learning" Actually Means →](ai-internals-03-what-learning-means.md), which answers that question.*
