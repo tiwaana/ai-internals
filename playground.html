@@ -119,6 +119,33 @@
   .boom{color:var(--pink);font-weight:600}
   .win{color:var(--accent2);font-weight:600}
 
+  /* --- pick a college --- */
+  .pc-grid{display:grid;grid-template-columns:1fr 240px;gap:18px;align-items:start}
+  @media (max-width:720px){ .pc-grid{grid-template-columns:1fr} }
+  .pc-side{position:sticky;top:12px}
+  @media (max-width:720px){ .pc-side{position:static} }
+  .pc-college,.pc-side{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .pc-name{font-size:19px;font-weight:700;margin:0}
+  .pc-sub{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin:0 0 8px}
+  .pc-row{margin:0 0 9px}
+  .pc-top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+  .pc-top b{color:var(--amber);font-weight:600}
+  .pc-row input[type=range]{width:100%;min-width:0;margin:2px 0 0}
+  .pc-ends{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .pc-side svg{width:100%;height:auto;display:block}
+  .pc-side input[type=range]{width:100%;min-width:0}
+  .pc-picky{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--dim);margin-top:6px}
+  .pc-picky .sval{width:auto}
+  .pc-picky-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--faint);margin:0}
+  .btn.pc-yes{background:var(--accent2);border-color:var(--accent2);color:#0d1117}
+  .btn.pc-no{background:var(--pink);border-color:var(--pink);color:#0d1117}
+  .pc-wh{margin:22px 0 6px;font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .pc-wh span{text-transform:none;font-weight:400}
+  .pc-weights{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:4px 14px}
+  @media (max-width:720px){ .pc-weights{grid-template-columns:1fr} }
+  .pc-weights .slider label{width:84px}
+  .pc-weights .slider input[type=range]{min-width:0}
+  .pc-weights .sval{width:44px}
   footer{padding:30px 0 60px;color:var(--faint);font-family:var(--mono);font-size:12.5px;text-align:center}
 </style>
 </head>
@@ -152,47 +179,44 @@
   <section id="percep" class="hidden">
     <div class="card" id="college">
       <h3>🎓 Pick a College — one neuron, and it learns its own weights</h3>
-      <p class="hint">Ten things you care about, ten numbers for how much you care. Multiply, add, see if the total clears the bar.
-      That is a perceptron, and nothing here is faked: the total below is a real weighted sum, and the learn button runs
-      Rosenblatt's 1958 rule over the examples you label.</p>
+      <p class="hint">Every score means how good this college is for you, 0 is worst and 10 is best. The neuron multiplies
+      each score by how much you care, adds it all up, and checks it against your bar. Nothing here is faked: the gauge is a
+      real weighted sum, and the learn button runs Rosenblatt's 1958 rule over the colleges you judge.</p>
 
-      <div class="panes">
-        <div class="pane">
-          <h4>This college scores</h4>
+      <div class="pc-grid">
+        <div class="pc-college">
+          <p class="pc-name" id="pc-name"></p>
+          <p class="pc-sub">how it scores for you</p>
           <div id="pc-inputs"></div>
         </div>
-        <div class="pane">
-          <h4>How much you care <span style="text-transform:none;font-weight:400">(the weights)</span></h4>
-          <div id="pc-weights"></div>
+        <div class="pc-side">
+          <svg id="pc-gauge" viewBox="0 0 230 250" role="img" aria-label="Live gauge: the fill is the weighted sum, the dashed line is your bar, the switch shows the decision"></svg>
+          <div class="pc-picky"><span>how picky (the bias)</span><span class="sval" id="pc-biasv"></span></div>
+          <input type="range" id="pc-bias" min="-60" max="60">
+          <p class="pc-picky-ends"><span>apply anywhere</span><span>very picky</span></p>
         </div>
       </div>
 
-      <div class="slider" style="margin-top:14px">
-        <label>bias (the bar)</label>
-        <input type="range" id="pc-bias" min="-60" max="60" value="-10">
-        <span class="sval" id="pc-biasv">-1.0</span>
+      <div class="row2">
+        <button class="btn pc-yes" id="pc-yes">✓ I would apply</button>
+        <button class="btn pc-no" id="pc-no">✗ I would skip</button>
+        <button class="btn ghost" id="pc-roll">🎲 another college</button>
       </div>
+      <p class="stats" id="pc-set"></p>
 
-      <div class="out" id="pc-out">total <b>0.00</b></div>
-      <div class="goal" id="pc-verdict">Move a slider to see what this neuron decides.</div>
+      <h4 class="pc-wh">How much you care <span>(the weights)</span></h4>
+      <div class="pc-weights" id="pc-weights"></div>
 
       <div class="row2">
-        <button class="btn ghost" id="pc-roll">🎲 new college</button>
-        <button class="btn" id="pc-yes">✓ I would apply</button>
-        <button class="btn ghost" id="pc-no">✗ I would not</button>
-      </div>
-      <p class="stats" id="pc-set">labelled so far: <b>0</b></p>
-
-      <div class="row2">
-        <button class="btn" id="pc-learn">🧠 learn the weights from my labels</button>
-        <button class="btn ghost" id="pc-clear">clear labels</button>
+        <button class="btn" id="pc-learn">🧠 learn the weights from my choices</button>
+        <button class="btn ghost" id="pc-clear">start over</button>
       </div>
       <p class="stats" id="pc-status"></p>
 
-      <div class="note"><b>Label six or seven colleges, then hit learn.</b> Nobody sets the weights by hand in a
+      <div class="note"><b>Judge six or seven colleges, then hit learn.</b> Nobody sets the weights by hand in a
       real model, and you do not have to either. The rule is the whole of learning in one line: when the neuron gets one
       wrong, nudge every weight a little in the direction that would have fixed it, then go round again.
-      If your labels do not follow any consistent rule, watch what happens. It never settles, and that failure is not a
+      If your choices do not follow any consistent rule, watch what happens. It never settles, and that failure is not a
       bug in the toy, it is the same wall the next game is about.</div>
     </div>
 
@@ -904,55 +928,78 @@ newData(); w=WMIN+Math.random()*2; b=BMIN+Math.random()*3; redraw();
 /* ==================================================================
    GAME 4 — THE PERCEPTRON  (real weighted sum, real 1958 learning rule)
    ================================================================== */
-const FACTORS=["cost","distance","programme","weather","friend",
+const FACTORS=["cost","distance","program","weather","friend",
                "class size","food","brochure","sports","parents"];
+/* what 0 and 10 mean: every score is "how good is this for you" */
+const ENDS=[["can't afford it","very affordable"],["wrong distance","just right"],["weak","top program"],
+  ["you'd hate it","you'd love it"],["you know nobody","your people are there"],["wrong size for you","just right"],
+  ["awful","great"],["nothing like the photos","exactly the brochure"],["nothing you care about","teams you love"],
+  ["they'd visit every weekend","they'd leave you alone"]];
+/* defaults start on Anand's real top three from Part 2: price, program, friends */
+const PC_W0=[2.0,0.4,1.8,0.2,1.4,0.3,0.2,0.1,0,0.2], PC_B0=-2.5;
+const PC_NAMES=["Northfield State","Lakeview College","Pine Ridge Tech","Westbrook University","Cedar Falls College",
+  "Harbor Point State","Summit Valley Tech","Riverbend University","Oak Hollow College","Granite Peak State"];
 let pcX=FACTORS.map(()=>Math.round(Math.random()*10));
-let pcW=FACTORS.map(()=>0);
-let pcB=-1.0;
-let pcSet=[];
+let pcW=PC_W0.slice();
+let pcB=PC_B0;
+let pcSet=[], pcN=0;
 
 function pcBuild(){
   $("pc-inputs").innerHTML=FACTORS.map((f,i)=>
-    `<div class="slider"><label>${f}</label>
-     <input type="range" id="pi${i}" min="0" max="10" value="${pcX[i]}">
-     <span class="sval" id="piv${i}">${pcX[i]}</span></div>`).join("");
+    `<div class="pc-row"><div class="pc-top"><span>${f}</span><b id="piv${i}"></b></div>
+     <input type="range" id="pi${i}" min="0" max="10">
+     <div class="pc-ends"><span>0 · ${ENDS[i][0]}</span><span>${ENDS[i][1]} · 10</span></div></div>`).join("");
   $("pc-weights").innerHTML=FACTORS.map((f,i)=>
     `<div class="slider"><label>${f}</label>
-     <input type="range" id="pw${i}" min="-50" max="50" value="${Math.round(pcW[i]*10)}">
-     <span class="sval" id="pwv${i}">${pcW[i].toFixed(2)}</span></div>`).join("");
+     <input type="range" id="pw${i}" min="-50" max="50">
+     <span class="sval" id="pwv${i}"></span></div>`).join("");
   FACTORS.forEach((f,i)=>{
-    $("pi"+i).oninput=e=>{ pcX[i]=+e.target.value; $("piv"+i).textContent=pcX[i]; pcScore(); };
-    $("pw"+i).oninput=e=>{ pcW[i]=e.target.value/10; $("pwv"+i).textContent=pcW[i].toFixed(2); pcScore(); };
+    $("pi"+i).oninput=e=>{ pcX[i]=+e.target.value; pcScore(); };
+    $("pw"+i).oninput=e=>{ pcW[i]=e.target.value/10; pcScore(); };
   });
 }
 function pcSync(){
-  FACTORS.forEach((f,i)=>{
-    $("pi"+i).value=pcX[i];  $("piv"+i).textContent=pcX[i];
-    $("pw"+i).value=Math.round(pcW[i]*10); $("pwv"+i).textContent=pcW[i].toFixed(2);
-  });
-  $("pc-bias").value=Math.round(pcB*10); $("pc-biasv").textContent=pcB.toFixed(2);
+  FACTORS.forEach((f,i)=>{ $("pi"+i).value=pcX[i]; $("pw"+i).value=Math.round(pcW[i]*10); });
+  $("pc-bias").value=Math.round(-pcB*10);  /* slider runs as pickiness: right = higher bar = lower bias */
+  $("pc-name").textContent=PC_NAMES[pcN%PC_NAMES.length];
 }
 /* the weighted sum, for real */
-function pcTotal(x){ let t=pcB; for(let i=0;i<FACTORS.length;i++) t+=(x[i]/10)*pcW[i]; return t; }
+function pcSum(x){ let t=0; for(let i=0;i<FACTORS.length;i++) t+=(x[i]/10)*pcW[i]; return t; }
+function pcTotal(x){ return pcB+pcSum(x); }
+/* the gauge: fill = weighted sum, bar = -bias, so "over the bar" is exactly pcTotal > 0 */
+const PC_LO=-4, PC_HI=8, PC_Y0=20, PC_Y1=210, pcY=v=>PC_Y1-(clamp(v,PC_LO,PC_HI)-PC_LO)/(PC_HI-PC_LO)*(PC_Y1-PC_Y0);
 function pcScore(){
-  const t=pcTotal(pcX);
-  $("pc-out").innerHTML=`total <b>${t.toFixed(2)}</b>`;
-  const v=$("pc-verdict");
-  if(t>0){ v.className="goal win"; v.textContent="✓ clears the bar. The neuron fires, you apply."; }
-  else   { v.className="goal";     v.textContent="✗ under the bar. Nothing happens."; }
+  FACTORS.forEach((f,i)=>{ $("piv"+i).textContent=pcX[i]; $("pwv"+i).textContent=pcW[i].toFixed(2); });
+  $("pc-biasv").textContent=pcB.toFixed(2);
+  const s=pcSum(pcX), bar=-pcB, on=pcTotal(pcX)>0, y0=pcY(0), ys=pcY(s), yb=pcY(bar);
+  $("pc-gauge").innerHTML=`
+    <rect x="30" y="${PC_Y0}" width="56" height="${PC_Y1-PC_Y0}" rx="6" style="fill:var(--panel);stroke:var(--line)"/>
+    <rect x="34" y="${Math.min(y0,ys)}" width="48" height="${Math.max(2,Math.abs(ys-y0))}" rx="3" style="fill:${s>=0?"var(--accent)":"var(--pink)"};opacity:.85"/>
+    <line x1="26" y1="${y0}" x2="90" y2="${y0}" style="stroke:var(--faint);stroke-width:1"/>
+    <text x="22" y="${y0+4}" text-anchor="end" style="fill:var(--faint);font:10px ui-monospace,monospace">0</text>
+    <line x1="22" y1="${yb}" x2="96" y2="${yb}" style="stroke:var(--amber);stroke-width:2.5;stroke-dasharray:6 4"/>
+    <text x="100" y="${yb+4}" style="fill:var(--amber);font:600 11px ui-monospace,monospace">your bar</text>
+    <text x="58" y="236" text-anchor="middle" style="fill:var(--dim);font:11px ui-monospace,monospace">sum ${s.toFixed(2)}</text>
+    <rect x="176" y="70" width="44" height="70" rx="10" style="fill:var(--panel);stroke:var(--line)"/>
+    <rect x="190" y="80" width="16" height="50" rx="8" style="fill:${on?"var(--accent2)":"var(--line)"}"/>
+    <circle cx="198" cy="${on?92:118}" r="8" style="fill:var(--ink)"/>
+    <circle cx="198" cy="185" r="26" style="fill:${on?"var(--accent2)":"var(--panel)"};stroke:${on?"var(--accent2)":"var(--line)"}"/>
+    <text x="198" y="189" text-anchor="middle" style="fill:${on?"#0d1117":"var(--dim)"};font:700 12px ui-monospace,monospace">${on?"apply":"skip"}</text>
+    ${s>PC_HI?`<text x="58" y="14" text-anchor="middle" style="fill:var(--accent);font:11px ui-monospace,monospace">▲ off the top</text>`:""}
+    ${s<PC_LO?`<text x="58" y="248" text-anchor="middle" style="fill:var(--pink);font:11px ui-monospace,monospace">▼ off the bottom</text>`:""}`;
 }
-function pcCount(){ $("pc-set").innerHTML=`labelled so far: <b>${pcSet.length}</b>`+
+function pcCount(){ $("pc-set").innerHTML=`colleges you have judged: <b>${pcSet.length}</b>`+
   (pcSet.length?` &nbsp;(${pcSet.filter(e=>e.y).length} apply, ${pcSet.filter(e=>!e.y).length} skip)`:""); }
 
-$("pc-bias").oninput=e=>{ pcB=e.target.value/10; $("pc-biasv").textContent=pcB.toFixed(2); pcScore(); };
-$("pc-roll").onclick=()=>{ pcX=FACTORS.map(()=>Math.round(Math.random()*10)); pcSync(); pcScore(); };
+$("pc-bias").oninput=e=>{ pcB=-e.target.value/10; pcScore(); };
+$("pc-roll").onclick=()=>{ pcX=FACTORS.map(()=>Math.round(Math.random()*10)); pcN++; pcSync(); pcScore(); };
 $("pc-yes").onclick=()=>{ pcSet.push({x:pcX.slice(),y:1}); pcCount(); $("pc-roll").onclick(); };
 $("pc-no").onclick =()=>{ pcSet.push({x:pcX.slice(),y:0}); pcCount(); $("pc-roll").onclick(); };
-$("pc-clear").onclick=()=>{ pcSet=[]; pcCount(); $("pc-status").textContent=""; };
+$("pc-clear").onclick=()=>{ pcSet=[]; pcW=PC_W0.slice(); pcB=PC_B0; pcCount(); $("pc-status").textContent=""; pcSync(); pcScore(); };
 
 /* Rosenblatt's rule: predict, and when wrong, nudge toward the answer */
 $("pc-learn").onclick=()=>{
-  if(pcSet.length<2){ $("pc-status").innerHTML="Label at least two colleges first, one of each."; return; }
+  if(pcSet.length<2){ $("pc-status").innerHTML="Judge at least two colleges first, one of each."; return; }
   const lr=0.08; let pass=0, wrong=1;
   while(pass<400 && wrong>0){
     wrong=0;
@@ -969,10 +1016,10 @@ $("pc-learn").onclick=()=>{
   }
   pcSync(); pcScore();
   $("pc-status").innerHTML = wrong===0
-    ? `<b>settled after ${pass} passes.</b> Those weights now agree with every label you gave it. Nobody typed them in.`
-    : `ran 400 passes and <b>${wrong}</b> still wrong. It cannot find one straight rule that fits your labels, so it will keep going round for ever. That is the next game.`;
+    ? `<b>settled after ${pass} passes.</b> Those weights now agree with every choice you made. Nobody typed them in.`
+    : `ran 400 passes and <b>${wrong}</b> still wrong. It cannot find one straight rule that fits your choices, so it will keep going round for ever. That is the next game.`;
 };
-pcBuild(); pcCount(); pcScore();
+pcBuild(); pcSync(); pcCount(); pcScore();
 
 /* ---------- THE WALL: XOR ---------- */
 const XPTS=[[0,0,0],[0,1,1],[1,0,1],[1,1,0]];
