@@ -68,11 +68,13 @@ You could build that parrot yourself right now. It takes about ten seconds.
 
 > 🦜 **Play:** [**Feed the Parrot**](playground.html#parrot) in the playground. Type in some text, hit train, and it builds exactly that table, showing which word comes next for every pair of words. Then let it write using your own text, which works surprisingly well. But ask it for something a bit different and you will see it fall apart quickly.
 
-The parrot does not fail because it needs more text. It fails on arithmetic.
+The parrot is like a travel phrasebook. It has a fixed set of sentences, like "Where is the train station?" and "How much is this?", and those work fine. But real life asks for sentences like *"My daughter left her swim bag on the 3:15 train,"* and that one is not in the book. Nobody can print every combination of words, because there are far too many. The parrot has the same problem. It only knows the sentences it has seen, and no amount of text covers them all. That is where the maths stops working.
 
 Imagine a sentence of twenty words, drawn from a vocabulary of fifty thousand words. The number of possible twenty word sentences is 50,000 to the twentieth power, a number with about 94 digits. For comparison, there are only about 80 digits worth of atoms in the observable universe. So a long sentence you read today has very likely never been written down before, by anyone.
 
 Let me be clear. There is nothing to look up. A machine trying to guess the next word across all of human writing cannot just remember everything, because there is not enough room in the universe for that. Its only choice is to compress. It has to figure out the rules behind all those sentences and remember the rules instead.
+
+Hold on to this parrot. In Part 11 we put it next to a real model and give them both a sentence neither has seen.
 
 And the rules of human language cover almost everything we know. The model has to learn grammar, since bad grammar leads to bad guesses. It needs to learn facts, because "the capital of France is" has only one correct answer and every mistake counts against it. It also has to learn arithmetic, since sums show up in text and come out a particular way. It needs to know that trophies are big and cases are things you put objects into. It even has to understand that if someone is angry in the first paragraph, they are probably still angry in the third, because that affects which word comes next.
 
