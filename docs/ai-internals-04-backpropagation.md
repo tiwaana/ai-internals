@@ -128,7 +128,7 @@ GENERATION (seed 'he', model writes the rest):
    target: 'hello world'   MATCH
 ```
 
-Look at step 0. Loss **2.1885**. In Part 3 I said a model guessing blindly between eight options would score about 2.08, before we had run anything at all, and there it is. The model really is guessing uniformly over eight characters, and the theory told us the number in advance. That is the moment to decide whether you believe this stuff, and I think you should.
+Look at step 0. Loss **2.1885**. We could have predicted that before running anything. A model with no idea which of eight characters comes next should be equally unsure of all of them, 12.5% on each. Whatever the right character turns out to be, the model was 12.5% sure of it, and Part 3's grading turns 12.5% into a loss of about 2.08. So 2.08 is the score of a blind guess, and there it is. The model really is guessing uniformly over eight characters, and the theory told us the number in advance. That is the moment to decide whether you believe this stuff, and I think you should.
 
 By step 250 the loss has collapsed to 0.0013 and the output is already right. A few hundred trips around a four-step loop found weights that encode the sequence.
 

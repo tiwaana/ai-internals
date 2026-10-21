@@ -30,7 +30,7 @@ Two things worth knowing before you use it.
 
 **Chain rule** *(mechanism)* · *Part 4*. The piece of calculus that makes backpropagation work. Old, dull, and the most valuable thing in the series. Nobody will say it to you; they will say backprop.
 
-**Cross-entropy** · *Part 3*. The usual way to put a number on how wrong a prediction was. It asks how surprised the model should have been by the right answer, and it punishes confident wrongness far harder than uncertain wrongness. It scores a whole spread of possibilities rather than one guess, which is why it is the one used for prediction.
+**Cross-entropy** · *Part 3*. The usual way to put a number on how wrong a prediction was. It grades the model on how sure it was of the answer that turned out to be right, and it punishes confident wrongness far harder than uncertain wrongness.
 
 ## D
 
@@ -50,11 +50,11 @@ Two things worth knowing before you use it.
 
 ## L
 
-**Learning rate** · *Part 3*. How big a step to take downhill. The knob that will waste more of your time than any other. Too small and you creep; too large and you overshoot, bounce harder each time, and the loss becomes `NaN`.
+**Learning rate** · *Part 3*. How big a step to take downhill. It scales every knob's slope: each knob moves by its slope times the learning rate. The knob that will waste more of your time than any other. Too small and you creep; too large and you overshoot, bounce harder each time, and the loss becomes `NaN`.
 
-**Local minimum** · *Part 3*. A dip you can roll into and get stuck in because the ground rises in every direction. The field was frightened of these for years. With a billion directions the odds that not one of them slopes down are effectively nil, so it turned out to be mostly an artifact of drawing the picture in two dimensions.
+**Local minimum** · *Part 3*. A hollow partway down the loss landscape where training can get trapped, like water pooling into a mountain lake: every way out goes uphill. The lowest point of all is the global minimum. In large networks, most flat spots turn out to be saddle points with a way down, so training seldom gets badly stuck in practice, though it can stall.
 
-**Loss** · *Part 3*. A single number that is large when the model is wrong and zero when it is perfect. That is the whole specification, and which loss you choose decides what the machine actually aims at.
+**Loss** · *Part 3*. A single number that is large when the model is wrong and zero when it is perfect. Wrong means wrong compared to the answer the model was given. That is the whole specification.
 
 ## P
 
