@@ -22,7 +22,7 @@ Two things worth knowing before you use it.
 
 ## B
 
-**Backpropagation** · *Part 4*. Working out how much every weight contributed to the error by pushing the blame backwards from the answer, one layer at a time. One backward pass gets you the answer for every weight and costs about what one forward pass costs. Without it, training anything large would be arithmetically impossible.
+**Backpropagation** · *Part 4*. Working out how much every weight contributed to the error by pushing the blame backwards from the answer, one layer at a time. One backward pass gets you the answer for every weight and costs about as much as a few forward passes. Without it, training anything large would be arithmetically impossible.
 
 **Bias** · *Part 2*. One extra number added at the end of a neuron's sum that is not attached to any input. How picky it is in general. Its baseline mood.
 

@@ -55,7 +55,7 @@
 | **1a** | [What Changed While I Was Away](ai-internals-01a-what-changed.md) | The story. Why the maths mostly did not change, what the oven was, and what we traded away |
 | **1b** | [The Guessing Machine](ai-internals-01b-the-guessing-machine.md) | The one word you need, and the one thing the machine does |
 | **2** | [The Perceptron](ai-internals-02-the-perceptron.md) | One neuron, built from picking a college. Weights, bias, activation, and a 1958 press release that has not aged well |
-| **3** | [What "Learning" Actually Means](ai-internals-03-what-learning-means.md) | Being wrong in a measurable way, rolling downhill, and the one knob that will ruin your week |
+| **3** | [What "Learning" Actually Means](ai-internals-03-what-learning-means.md) | Chasing the perfect dish: measure how wrong, find the slope, adjust, and the one setting that will ruin your week |
 | **4** | [Backpropagation](ai-internals-04-backpropagation.md) | Why you cannot test a billion weights one at a time, and the 1986 trick that means you do not have to. Runs live |
 | **5** | [Why It Was All Kind of Terrible in 2002](ai-internals-05-terrible-in-2002.md) | Five reasons it did not work, the question nobody answered right, and the ten point win in 2012 |
 

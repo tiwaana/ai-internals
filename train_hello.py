@@ -1,10 +1,9 @@
 """
 train_hello.py — watch a neural net LEARN "hello world" from scratch.
 
-Part 5 built a transformer with RANDOM weights -> nonsense output.
-This is the missing half: TRAINING. We implement the full loop by hand
-in NumPy — forward, loss, backward (backprop), update — and watch the
-loss fall and the prediction turn correct.
+The companion script for Part 4 of AI Internals. We implement the full
+training loop by hand in NumPy (forward, loss, backward, update) and watch
+the loss fall and the prediction turn correct.
 
 To keep backprop readable by hand we use a small model: predict the next
 char from the previous 2 chars (embed -> hidden layer -> softmax). The

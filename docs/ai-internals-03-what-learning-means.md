@@ -36,6 +36,7 @@ Now we can give it a grade. Look at the answer you chose and see how confident t
 
 The most common type of loss is called **cross-entropy**. The name sounds more complicated than it really is:
 
+<!-- latex: \text{loss} = -\log\left(\text{the probability the model gave to the correct answer}\right) -->
 ```
 loss = −log(the probability the model gave to the correct answer)
 ```
