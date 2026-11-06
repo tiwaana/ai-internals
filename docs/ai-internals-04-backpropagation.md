@@ -14,11 +14,11 @@ That's thousands of years of training, and slow is too kind a word for it. Moder
 
 You don't need to test each knob separately because they're all linked in a chain, and each one influences the final answer through the layers that come after. So, you begin at the end, where you know how the answer was graded, and then move backwards through each layer.
 
-This is where the single cook from Part 3 becomes a whole kitchen. In a network, each station works with what the previous one gives it. Imagine the kitchen sends out a bad dish. You give the plating station a note: if you change what you send out like this, the score changes like that. Plating uses the note to figure out what its own knobs did. Then it writes a new note for the grill, explaining how the score would change if the grill handed over something different. The grill doesn't need to meet the customer because the note already covers everything that happens after the grill. After one trip through the kitchen, every station knows what to change.
+This is where the single cook from Part 3 becomes a whole kitchen. In a network, each station works with what the previous one gives it. Imagine the kitchen sends out a bad dish. You give the plating station a note: if you change what you send out like this, the score changes like that. The plating station uses the note to figure out what its own knobs did. Then it writes a new note for the grilling station, explaining how the score would change if the grilling station handed over something different. The grilling station doesn't need to meet the customer because the note already covers everything that happens after it. After one trip through the kitchen, every station knows what to change.
 
 I'll keep calling that number **blame**, with one warning. Blame here means how much the final score would change if this thing changed a bit. It's not like sharing a pie. Two stations can both have a lot of blame, and if one has more, it doesn't mean the other has less.
 
-Let's use numbers. Suppose adding a tiny pinch of salt at plating changes the final score by 3. That's plating's note. Now, if a tiny pinch at the grill adds 2 pinches to what plating gets, the grill's blame is 2 times 3, which is 6. Nobody had to cook again to figure this out because the 3 was already on the note.
+Let's use numbers. Suppose adding a tiny pinch of salt at plating station changes the final score by 3. That's plating's note. Now, if a tiny pinch at the grilling station adds 2 pinches to what the plating station gets, the grilling station's blame is 2 times 3, which is 6. Nobody had to cook again to figure this out because the 3 was already on the note.
 
 That multiplying along the line is called the **chain rule**. It might seem old and boring, but it's the most valuable idea in this series. Backpropagation uses the chain rule in reverse through the network, with each note worked out once and reused by everything before it. That reuse is what saves time.
 
@@ -54,17 +54,17 @@ That multiplying along the line is called the **chain rule**. It might seem old 
 
 What's really surprising is how little it costs. With just one backward pass, you get the **gradient** for every weight in the network. It tells you which way to move each knob, and how strongly, like more salt or less. Whether you call it blame in the kitchen, slope on a mountainside, or gradient in a meeting, it's the same idea: one number, just with different names. A backward pass costs about as much as a few forward passes, so instead of paying for a billion trips through the kitchen, you only pay for one round trip.
 
-With our network, which takes just one millisecond, something that would have taken eleven days now only takes a few milliseconds. That's why training large models is possible.
+With our network, something that would have taken eleven days now takes just a few milliseconds. That's why training large models is possible.
 
 > 🍳 **Play:** [**Check the Blame**](playground.html#blame) in the playground uses a real network with 121 weights, and it calculates the blame both ways. If you press the slow button, you'll see the counter go up to 121 as it cooks the dish again for each weight. If you press the fast button, it just says 1. Look at the bars: both methods give you the same answer, accurate to six decimal places. So backprop doesn't lose any accuracy.
 
 ## It is older than the hype
 
-Several people discovered the algorithm on their own, not knowing about each other's work. Seppo Linnainmaa first introduced the general method in 1970 as part of numerical analysis, with no link to neural networks. A few years later, Paul Werbos applied it to networks in his 1974 thesis, but his work was mostly overlooked then.
+Several people discovered the algorithm independently, unaware of each other's work. Seppo Linnainmaa first introduced the general method in 1970 as part of numerical analysis, with no link to neural networks. A few years later, Paul Werbos applied it to networks in his 1974 thesis, but people largely overlooked his work at the time.
 
 The algorithm gained widespread attention after Rumelhart, Hinton, and Williams published a paper about it in *Nature* in 1986. Their work showed how the method could be used and reached many influential people.
 
-In PyTorch, the tool most people use to train models, this process happens with just one line: `loss.backward()`. Many people who use it have never looked into how it works behind the scenes, which makes sense. After all, you can drive a car without knowing how the engine works. Still, let's take a look, since the main idea only takes about a dozen lines.
+In PyTorch, the tool most people use to train models, this process happens with just one line: `loss.backward()`. Many people who use it have never looked under the hood, which makes sense. After all, you can drive a car without knowing how the engine works. Still, let's take a look, since the main idea only takes about a dozen lines.
 
 ## Watch how it learns to say "hello world"
 
